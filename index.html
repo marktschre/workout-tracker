@@ -15,7 +15,6 @@
     background: #f2f2f7; color: #1d1d1f;
   }
   h1 { font-size: 22px; margin: 8px 0 2px; }
-  h2 { font-size: 18px; margin: 4px 0 12px; color: #3a3a3c; }
   .sub { color: #6e6e73; font-size: 13px; margin-top: 0; }
   .card {
     background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
@@ -28,22 +27,45 @@
   .btn:active { background: #005bb5; }
   .btn.secondary { background: #e5e5ea; color: #1d1d1f; }
   .btn.secondary:active { background: #d1d1d6; }
-  .btn.small { padding: 10px; font-size: 14px; margin-top: 6px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .home-section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
     color: #8e8e93; margin: 18px 4px 6px; }
-  .ex-name { font-weight: 600; font-size: 16px; }
+  .ex-name { font-weight: 600; font-size: 16px; color: #0071e3; }
   .ex-target { color: #8e8e93; font-size: 13px; margin-bottom: 8px; }
+  .detail-block {
+    background: #f5f5f7; border-radius: 8px; padding: 10px 12px; margin: 6px 0 10px;
+    font-size: 13px; color: #3a3a3c; line-height: 1.4;
+  }
+  .detail-block a { color: #0071e3; font-weight: 600; display: inline-block; margin-top: 6px; }
   .stepper-row { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; }
-  .stepper-row .label { font-size: 14px; color: #48484a; width: 90px; flex-shrink: 0; }
-  .stepper { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end; }
+  .stepper-row .label { font-size: 14px; color: #48484a; width: 60px; flex-shrink: 0; }
+  .stepper { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
   .stepper button {
-    width: 38px; height: 38px; border-radius: 10px; border: none; background: #e5e5ea;
-    font-size: 20px; font-weight: 600; color: #1d1d1f; line-height: 1;
+    width: 34px; height: 34px; border-radius: 9px; border: none; background: #e5e5ea;
+    font-size: 18px; font-weight: 600; color: #1d1d1f; line-height: 1;
   }
   .stepper button:active { background: #d1d1d6; }
-  .stepper .val { min-width: 76px; text-align: center; font-size: 16px; font-weight: 600; }
+  .stepper .val { min-width: 68px; text-align: center; font-size: 15px; font-weight: 600; }
+  .setgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .setcell { text-align: center; }
+  .setcell .setlabel { font-size: 11px; color: #8e8e93; margin-bottom: 3px; }
+  .setcell .mini { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .setcell .mini button {
+    width: 26px; height: 26px; border-radius: 7px; border: none; background: #e5e5ea;
+    font-size: 15px; font-weight: 600; line-height: 1;
+  }
+  .setcell .mini .v { min-width: 30px; text-align: center; font-size: 13px; font-weight: 600; }
+  .bandgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 8px 0; }
+  .bandtier { background: #f5f5f7; border-radius: 10px; padding: 6px; text-align: center; }
+  .bandtier .tlabel { font-size: 12px; color: #6e6e73; margin-bottom: 4px; font-weight: 600; }
+  .bandtier .mini { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .bandtier .mini button {
+    width: 28px; height: 28px; border-radius: 7px; border: none; background: #e5e5ea;
+    font-size: 15px; font-weight: 700;
+  }
+  .bandtier .mini .v { min-width: 20px; text-align: center; font-size: 14px; font-weight: 700; }
+  .band-total { font-size: 14px; font-weight: 600; margin-top: 4px; color: #1d1d1f; }
   .variant-row { display: flex; gap: 8px; margin-bottom: 8px; }
   .variant-btn {
     flex: 1; padding: 10px 6px; border-radius: 10px; border: 1.5px solid #d1d1d6;
@@ -53,16 +75,19 @@
   .toggle-row { display: flex; align-items: center; justify-content: space-between; }
   .toggle-btn {
     padding: 8px 16px; border-radius: 20px; border: 1.5px solid #d1d1d6; background: white;
-    font-size: 14px; font-weight: 600; color: #1d1d1f;
+    font-size: 14px; font-weight: 600; color: #1d1d1f; flex-shrink: 0; margin-left: 10px;
   }
   .toggle-btn.on { background: #34c759; border-color: #34c759; color: white; }
+  .check-item { border-bottom: 1px solid #f0f0f2; padding: 10px 0; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item .name { font-size: 14px; font-weight: 600; color: #0071e3; }
   .badge {
     display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px;
     font-weight: 600; background: #e5e5ea; color: #48484a; margin-top: 4px;
   }
   .badge.top { background: #34c759; color: white; }
   .note-link { font-size: 13px; color: #0071e3; margin-top: 4px; display: inline-block; }
-  textarea.note-field, input.note-field {
+  input.note-field {
     width: 100%; margin-top: 6px; padding: 8px; border-radius: 8px; border: 1px solid #d1d1d6;
     font-size: 14px; font-family: inherit;
   }
@@ -75,32 +100,95 @@
     background: #1d1d1f; color: #7fd97f; font-size: 11px; padding: 10px; border-radius: 10px;
     overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin-top: 12px;
   }
-  #status {
+  #status, #settings-status {
     margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 13px; line-height: 1.4;
     background: white; border: 1px solid #d2d2d7; display: none;
   }
-  #status.show { display: block; }
-  #status.ok { border-color: #34c759; background: #eafff0; }
-  #status.err { border-color: #ff3b30; background: #fff0ef; }
+  #status.show, #settings-status.show { display: block; }
+  #status.ok, #settings-status.ok { border-color: #34c759; background: #eafff0; }
+  #status.err, #settings-status.err { border-color: #ff3b30; background: #fff0ef; }
   .backlink { font-size: 14px; color: #0071e3; margin-bottom: 10px; display: inline-block; }
+  .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: #8e8e93; margin-bottom: 6px; }
 </style>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-/* ============================== CONFIG ============================== */
+/* ============================== REFERENCE DATA ============================== */
+
+const EXERCISE_DETAILS = {
+  "Goblet Squat": { note:"Depth limited by heel-rise; quad/anterior chain.", ref:"https://exrx.net/WeightExercises/Kettlebell/KBGobletSquat" },
+  "DB Step-Up": { note:"Lead-heel drive only \u2014 no rear push-off (Achilles).", ref:"https://exrx.net/WeightExercises/Quadriceps/DBStepUp" },
+  "Pull-Up": { note:"Vertical pull; negative is key strength driver.", ref:"https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup" },
+  "Weighted Sit-Up": { note:"No momentum.", ref:"https://exrx.net/WeightExercises/RectusAbdominis/WtSitUp" },
+  "Side Plank": { note:"Isometric hold; keep hips lifted, body in a straight line.", ref:"https://exrx.net/WeightExercises/Obliques/BWSidePlank" },
+  "Seated Band Row": { note:"Neutral spine, no hinge; brace core, watch pelvic tuck late in set.", ref:"https://exrx.net/WeightExercises/BackGeneral/CBSeatedRow" },
+  "DB Bent-Over Row": { note:"Horizontal pull; full extension each rep, bench optional.", ref:"https://exrx.net/WeightExercises/BackGeneral/DBBentOverRow" },
+  "Ring Dip": { note:"Vertical push; rings rotate naturally; scale with feet supported.", ref:"https://gmb.io/gymnastic-rings-risks-benefits/" },
+  "Push-Up": { note:"Horizontal push; elbows 45\u00b0, full lockout.", ref:"https://exrx.net/WeightExercises/PectoralSternal/BWPushup" },
+  "DB Overhead Press": { note:"Core braced \u2014 no back hyperextension, seated or standing.", ref:"https://weighttraining.guide/exercises/seated-dumbbell-overhead-press/" },
+  "Band Face Pull": { note:"Precision movement, not loaded; shoulder health.", ref:"https://musclewiki.com/exercise/band-face-pull" },
+  "DB Curl": { note:"Full extension at bottom, peak contraction at top; no swing.", ref:"https://exrx.net/WeightExercises/Biceps/DBCurl" },
+  "DB RDL (mid-shin)": { note:"Hinge to mid-shin only (flexibility limit); posterior chain.", ref:"https://exrx.net/WeightExercises/OlympicLifts/RomanianDeadlift" },
+  "Reverse Lunge": { note:"Shallow rear-knee drop; front shin vertical; low Achilles dorsiflexion.", ref:"https://exrx.net/WeightExercises/Quadriceps/DBRearLunge" },
+  "Bird Dog": { note:"Anti-extension/rotation; opposite arm-leg reach, neutral spine, no twist.", ref:"https://exrx.net/WeightExercises/ErectorSpinae/BWBirdDog" },
+  "Ring Row": { note:"Scalable via foot position (more horizontal = harder).", ref:"https://gmb.io/rings/" },
+  "Pallof Press": { note:"Anti-rotation; press straight out from chest, resist the band's pull to the side.", ref:"https://weighttraining.guide/exercises/cable-horizontal-pallof-press/" },
+};
+
+const STRETCH_DETAILS = {
+  "Standing Quadriceps Stretch": { dur:"2\u00d720-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
+  "Lying Glute Stretch": { dur:"2\u00d720-30s", note:"Glute / piriformis.", ref:"https://exrx.net/Stretches/GluteusMaximus/Lying" },
+  "Seated Groin Stretch": { dur:"2\u00d720-30s", note:"Adductors. Soles together, pull heels toward groin, press knees toward floor with elbows \u2014 don't force.", ref:"https://exrx.net/Stretches/HipAdductors/SeatedGroinFloor" },
+  "Standing Hamstring Stretch (forward fold)": { dur:"2\u00d720-30s", note:"Hamstring. Hand-supported on thighs/shins as the fold develops \u2014 do not hang unsupported.", ref:"https://exrx.net/Stretches/Hamstrings/Standing" },
+  "Doorway Hamstring & Hip Flexor Stretch": { dur:"2\u00d730-60s", note:"Hamstring (raised leg) + hip flexor (extended leg) together. Lift the raised leg only until the lower back flattens to the floor.", ref:"https://www.columbiadoctors.org/health-library/multimedia/hamstring-stretch-doorway/" },
+  "Wall Straight Leg Calf Stretch": { dur:"2\u00d720-30s", note:"Gastrocnemius. Rear knee straight, heel down.", ref:"https://exrx.net/Stretches/Gastrocnemius/Wall" },
+  "Wall Bent Knee Calf Stretch": { dur:"2\u00d720-30s", note:"Soleus. Rear knee bent \u2014 isolates soleus from gastrocnemius.", ref:"https://exrx.net/Stretches/Soleus/Wall" },
+  "Kneeling Hip Flexor Stretch": { dur:"2\u00d720-30s", note:"Hip flexor (iliopsoas). Torso upright, push hips forward \u2014 don't lean forward from the torso.", ref:"https://exrx.net/Stretches/HipFlexors/KneelingHipFlexor" },
+  "Seated Cross Twist (IT Band)": { dur:"2\u00d715-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.kneepaincentersofamerica.com/blog/it-band-stretches-pdf" },
+  "Doorway Chest Stretch": { dur:"2\u00d720-30s", note:"Chest (pectoralis). Elbow at shoulder height for balanced upper/lower chest stretch.", ref:"https://exrx.net/Stretches/ChestGeneral/Doorway" },
+  "Rear Deltoid Stretch (cross-body)": { dur:"2\u00d720-30s", note:"Rear deltoid / posterior shoulder. Arm across chest, opposite hand on elbow.", ref:"https://exrx.net/Stretches/DeltoidPosterior/RearDelt" },
+  "Overhead Triceps Stretch": { dur:"2\u00d720-30s", note:"Triceps. Forearm behind head, opposite hand pulls elbow gently.", ref:"https://exrx.net/Stretches/Triceps/Overhead" },
+  "Overhead Lat Stretch": { dur:"2\u00d720-30s", note:"Lat. Pull elbow toward head/back, lean torso away \u2014 avoid overstressing the neck.", ref:"https://exrx.net/Stretches/LatissimusDorsi/Overhead" },
+  "Child's Pose (modified, wide-knee)": { dur:"1-2 min", note:"Lower back, passive stretch. Knees wide, big toes together \u2014 wide-knee reduces hip-flexion demand.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
+};
+
+const STRETCH_LISTS = {
+  "1": ["Standing Quadriceps Stretch","Lying Glute Stretch","Seated Groin Stretch","Standing Hamstring Stretch (forward fold)","Doorway Hamstring & Hip Flexor Stretch","Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch"],
+  "3": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
+  "4": ["Lying Glute Stretch","Standing Hamstring Stretch (forward fold)","Doorway Hamstring & Hip Flexor Stretch","Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Child's Pose (modified, wide-knee)"],
+  "6": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
+  "cycling": ["Standing Quadriceps Stretch","Kneeling Hip Flexor Stretch","Seated Cross Twist (IT Band)"],
+};
+
+const YOGA_POSES = [
+  { pose:"Centering (seated breath)", dur:"3-5 min", note:"Cross-legged or in a chair, eyes closed, slow breath. Nervous-system settling \u2014 sets the pace for the session.", ref:null },
+  { pose:"Cat-Cow", dur:"5 min (~8-10 rounds)", note:"Hands and knees, alternate arching (Cow) and rounding (Cat) with the breath. Non-weight-bearing \u2014 no Achilles or hip-depth concern.", ref:"https://en.wikipedia.org/wiki/Cat/Cow_pose" },
+  { pose:"Sphinx Pose", dur:"2\u00d760-90s", note:"Prone, forearms down, chest lifted. Gentlest backbend \u2014 zero ankle involvement.", ref:"https://www.yogajournal.com/poses/sphinx-pose/" },
+  { pose:"Reclining Bound Angle", dur:"2-3 min", note:"On the back, knees open to the sides, soles together. Purely passive hip opener \u2014 prop under each knee if needed.", ref:"https://www.yogajournal.com/poses/reclining-bound-angle-pose/" },
+  { pose:"Supine Spinal Twist", dur:"60-90s per side", note:"On the back, knees bent, drop both knees to one side, shoulders grounded. Safest twist for the back history.", ref:"https://www.yogabasics.com/asana/knee-down-twist/" },
+  { pose:"Child's Pose (wide-knee)", dur:"2-3 min", note:"Knees wide, big toes touching, hips sinking toward heels. Wide-knee, not narrow.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
+  { pose:"Legs-Up-the-Wall", dur:"5-8 min", note:"Legs resting up a wall, hips close to it. Closest thing to true rest in the sequence.", ref:"https://www.yogajournal.com/poses/legs-up-the-wall-pose-2/" },
+  { pose:"Savasana", dur:"5-8 min", note:"Flat on the back, arms and legs relaxed, eyes closed. Close the session here regardless of time remaining.", ref:null },
+];
+
+const BAND_TIERS = [10,20,30,40,50];
+const BAND_MAX_PER_TIER = 4;
+
+/* ============================== STRENGTH EXERCISE CONFIG ============================== */
 
 const STRENGTH_DAYS = {
   1: [
     { item:"Goblet Squat", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{min:15,max:45,step:2.5,default:30,unit:"lbs"} },
-    { item:"DB Step-Up", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps/leg",
-      weight:{min:0,max:25,step:2.5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
+      weight:{type:"simple",min:15,max:45,step:5,default:30,unit:"lbs"} },
+    { item:"DB Step-Up", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps",
+      weight:{type:"simple",min:0,max:25,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
     { item:"Pull-Up", target:"Max (target 5-10)", repMin:0, repMax:20, repDefault:5, repTop:10, unit:"reps",
-      weight:{min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+      weight:{type:"simple",min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
     { item:"Weighted Sit-Up", target:"15-20", repMin:8, repMax:25, repDefault:15, repTop:20, unit:"reps",
-      weight:{min:0,max:15,step:2.5,default:0,unit:"lbs",bwLabel:"BW"} },
+      weight:{type:"simple",min:0,max:15,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
     { item:"Side Plank", target:"20-30s/side", repMin:10, repMax:45, repDefault:20, repTop:30, unit:"sec/side",
       weight:null },
   ],
@@ -109,9 +197,9 @@ const STRENGTH_DAYS = {
       variants:["Seated Band Row","DB Bent-Over Row"],
       variantOverrides: {
         "Seated Band Row": { target:"10-12", repMin:6,repMax:16,repDefault:10,repTop:12,
-          weight:{min:25,max:110,step:5,default:75,unit:"lbs (band)"} },
+          weight:{type:"bandmix"} },
         "DB Bent-Over Row": { target:"10-12", repMin:6,repMax:16,repDefault:10,repTop:12,
-          weight:{min:15,max:40,step:2.5,default:30,unit:"lbs/hand"} },
+          weight:{type:"simple",min:15,max:40,step:5,default:30,unit:"lbs/hand"} },
       } },
     { item:"Dip", target:"8-12 (Ring) / 15-20 (Push-Up)", unit:"reps",
       variants:["Ring Dip","Push-Up"],
@@ -120,21 +208,21 @@ const STRENGTH_DAYS = {
         "Push-Up": { target:"15-20 or near-failure", repMin:8,repMax:30,repDefault:15,repTop:20, weight:null },
       } },
     { item:"DB Overhead Press", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{min:10,max:35,step:2.5,default:20,unit:"lbs/hand"} },
+      weight:{type:"simple",min:10,max:35,step:5,default:20,unit:"lbs/hand"} },
     { item:"Band Face Pull", target:"15-20", repMin:10, repMax:25, repDefault:15, repTop:20, unit:"reps",
-      weight:{min:1,max:4,step:1,default:1,unit:"band(s)"} },
+      weight:{type:"bandmix"} },
     { item:"Pallof Press", target:"10-12/side", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps/side",
-      weight:{min:1,max:3,step:1,default:1,unit:"band(s)"} },
+      weight:{type:"bandmix"} },
   ],
   4: [
     { item:"DB RDL (mid-shin)", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{min:15,max:45,step:2.5,default:30,unit:"lbs/hand"} },
-    { item:"Reverse Lunge", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps/leg",
-      weight:{min:0,max:30,step:2.5,default:17.5,unit:"lbs/hand",bwLabel:"BW"} },
+      weight:{type:"simple",min:15,max:45,step:5,default:30,unit:"lbs/hand"} },
+    { item:"Reverse Lunge", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps",
+      weight:{type:"simple",min:0,max:30,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
     { item:"Pull-Up", target:"Max (target 5-10)", repMin:0, repMax:20, repDefault:5, repTop:10, unit:"reps",
-      weight:{min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+      weight:{type:"simple",min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
     { item:"Weighted Sit-Up", target:"15-20", repMin:8, repMax:25, repDefault:15, repTop:20, unit:"reps",
-      weight:{min:0,max:15,step:2.5,default:0,unit:"lbs",bwLabel:"BW"} },
+      weight:{type:"simple",min:0,max:15,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
     { item:"Bird Dog", target:"8-10/side", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
       weight:null },
   ],
@@ -144,7 +232,7 @@ const STRENGTH_DAYS = {
     { item:"Push-Up", target:"15-20 or near-failure", repMin:8, repMax:30, repDefault:15, repTop:20, unit:"reps",
       weight:null },
     { item:"DB Curl", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{min:10,max:25,step:2.5,default:17.5,unit:"lbs/hand"} },
+      weight:{type:"simple",min:10,max:25,step:5,default:15,unit:"lbs/hand"} },
     { item:"Bird Dog", target:"8-10/side", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
       weight:null },
   ],
@@ -168,12 +256,24 @@ function lsSet(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+function bandTotal(mix) {
+  return BAND_TIERS.reduce((sum, t) => sum + t * (mix[t] || 0), 0);
+}
+function bandBreakdown(mix) {
+  const parts = BAND_TIERS.filter(t => mix[t] > 0).map(t => `${mix[t]}\u00d7${t}`);
+  return parts.length ? parts.join('+') : 'none';
+}
 function fmtWeight(cfg, val) {
   if (!cfg) return "BW";
+  if (cfg.type === "bandmix") {
+    const total = bandTotal(val);
+    return total === 0 ? "0 lbs" : `${total} lbs (${bandBreakdown(val)})`;
+  }
   if (val === 0 && cfg.bwLabel) return cfg.bwLabel;
   return `${val} ${cfg.unit}`;
 }
-function fmtReps(unit, val) { return `${val} ${unit}`; }
+function defaultBandMix() { const m = {}; BAND_TIERS.forEach(t => m[t] = 0); return m; }
 
 const app = document.getElementById('app');
 let state = { screen: 'home' };
@@ -185,10 +285,7 @@ async function shareJSON(payload, filenameBase, statusElId) {
   const filename = `${filenameBase}.json`;
   const file = new File([json], filename, { type: "application/json" });
   const statusEl = document.getElementById(statusElId);
-  const show = (msg, cls) => {
-    statusEl.textContent = msg;
-    statusEl.className = 'show ' + (cls || '');
-  };
+  const show = (msg, cls) => { statusEl.textContent = msg; statusEl.className = 'show ' + (cls || ''); };
   if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
     show("This device/browser can't share files. Open this page in Safari on the iPad.", "err");
     return;
@@ -201,13 +298,26 @@ async function shareJSON(payload, filenameBase, statusElId) {
   }
 }
 
+/* ============================== SHARED: DETAIL DRILL-DOWN ============================== */
+
+function detailBlockHTML(id, note, ref, dur) {
+  return `<div class="detail-block" id="detail-${id}">
+    ${dur ? `<div style="margin-bottom:4px;color:#8e8e93;">${dur}</div>` : ''}
+    ${note}
+    ${ref ? `<a href="${ref}" target="_blank" rel="noopener">Reference &rarr;</a>` : ''}
+  </div>`;
+}
+function toggleDetail(id) {
+  const el = document.getElementById(`detail-${id}`);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 /* ============================== HOME ============================== */
 
 function renderHome() {
   app.innerHTML = `
     <h1>Workout Collector</h1>
-    <p class="sub">Tap a day to log it. Everything here is click/tap — no typing required except the rare optional note.</p>
-
+    <p class="sub">Tap a day to log it. Everything here is click/tap \u2014 no typing required except the rare optional note.</p>
     <div class="home-section-label">Strength Days</div>
     <div class="grid2">
       <button class="btn" onclick="goStrength(1)">Day 1</button>
@@ -215,20 +325,129 @@ function renderHome() {
       <button class="btn" onclick="goStrength(4)">Day 4</button>
       <button class="btn" onclick="goStrength(6)">Day 6</button>
     </div>
-
     <div class="home-section-label">Cycling Days</div>
     <div class="grid2">
       <button class="btn" onclick="goCycling(2)">Day 2</button>
       <button class="btn" onclick="goCycling(5)">Day 5</button>
     </div>
-
     <div class="home-section-label">Other</div>
-    <button class="btn secondary" onclick="goYoga()">Day 7 — Yoga</button>
+    <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga</button>
     <button class="btn secondary" onclick="goAchilles()">Weekly Achilles Check</button>
     <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check</button>
+    <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
   `;
 }
 function goHome() { state = { screen: 'home' }; renderHome(); }
+
+/* ============================== SETTINGS: BACKUP / RESTORE ============================== */
+
+function gatherSettingsData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.indexOf('w_') === 0) data[key] = localStorage.getItem(key);
+  }
+  return data;
+}
+function applySettingsData(data) {
+  const keys = Object.keys(data);
+  keys.forEach(k => localStorage.setItem(k, data[k]));
+  return keys.length;
+}
+async function exportSettings() {
+  const data = gatherSettingsData();
+  const count = Object.keys(data).length;
+  const json = JSON.stringify(data, null, 2);
+  const filename = `workout_settings_${todayLocal()}.json`;
+  const file = new File([json], filename, { type: "application/json" });
+  const statusEl = document.getElementById('settings-status');
+  if (count === 0) {
+    statusEl.textContent = "Nothing to export yet \u2014 no exercise has been shared from this device.";
+    statusEl.className = 'show err';
+    return;
+  }
+  if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+    statusEl.textContent = "This browser can't share files. Open in Safari.";
+    statusEl.className = 'show err';
+    return;
+  }
+  try {
+    await navigator.share({ files: [file], title: "Workout Settings Backup" });
+    statusEl.textContent = `Shared ${filename} (${count} saved values). AirDrop is the fastest way to get it to your other device.`;
+    statusEl.className = 'show ok';
+  } catch (err) {
+    if (err.name !== "AbortError") { statusEl.textContent = "Export failed: " + err.message; statusEl.className = 'show err'; }
+  }
+}
+function handleImportFile(inputEl) {
+  const file = inputEl.files[0];
+  const statusEl = document.getElementById('settings-status');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const count = applySettingsData(data);
+      statusEl.textContent = `Restored ${count} saved values. New exercise screens will now start from these baselines.`;
+      statusEl.className = 'show ok';
+    } catch (err) {
+      statusEl.textContent = "That file didn't look like a settings backup: " + err.message;
+      statusEl.className = 'show err';
+    }
+  };
+  reader.readAsText(file);
+}
+function goSettings() { state = { screen: 'settings' }; renderSettings(); }
+function renderSettings() {
+  const count = Object.keys(gatherSettingsData()).length;
+  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Backup / Restore</h1>
+    <p class="sub">Weight and band baselines are stored on this device only. Use this to carry them to another device.</p>
+    <div class="card">
+      <div class="card-title">This device</div>
+      <p style="font-size:14px;margin:4px 0 10px;">${count} saved value${count===1?'':'s'} on this device.</p>
+      <button class="btn" onclick="exportSettings()">Export (Share / AirDrop)</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Restore on this device</div>
+      <p style="font-size:14px;margin:4px 0 10px;">Pick a settings file exported from another device.</p>
+      <input type="file" accept="application/json" id="import-file" style="display:none" onchange="handleImportFile(this)">
+      <button class="btn secondary" onclick="document.getElementById('import-file').click()">Choose File to Import</button>
+    </div>
+    <div id="settings-status"></div>`;
+}
+
+/* ============================== STRETCH CHECKLIST (shared) ============================== */
+
+function makeStretchState(listKey) {
+  return STRETCH_LISTS[listKey].map(name => ({ item: name, done: false }));
+}
+function renderStretchChecklist(stretchArr, prefix) {
+  let html = `<div class="card"><div class="card-title">Stretches</div>`;
+  stretchArr.forEach((s, i) => {
+    const d = STRETCH_DETAILS[s.item];
+    html += `<div class="check-item">
+      <div class="toggle-row">
+        <span class="name" onclick="toggleDetail('${prefix}-str-${i}')">${s.item}</span>
+        <button class="toggle-btn ${s.done?'on':''}" onclick="toggleStretch('${prefix}',${i})">${s.done?'Done \u2713':'Not done'}</button>
+      </div>
+      <div style="display:none;" id="detail-${prefix}-str-${i}">
+        ${detailBlockHTML(`${prefix}-str-${i}`.replace('detail-',''), d.note, d.ref, d.dur)}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function toggleStretch(prefix, i) {
+  const arr = prefix === 'cyc' ? state.stretches : state.stretches;
+  arr[i].done = !arr[i].done;
+  rerenderCurrent();
+}
+function rerenderCurrent() {
+  if (state.screen === 'strength') renderStrength();
+  else if (state.screen === 'cycling') renderCycling();
+}
 
 /* ============================== STRENGTH DAY ============================== */
 
@@ -239,30 +458,40 @@ function goStrength(dayNum) {
     day: dayNum,
     date: todayLocal(),
     checklist: { "Warm-up (5-min light cardio + dynamic prep)": false,
-                 "Balance (single-leg stance, rest intervals)": false,
-                 [`Stretches (Day ${dayNum} set)`]: false },
-    entries: exList.map(cfg => {
-      const active = cfg.variants ? cfg.variantOverrides[cfg.variants[0]] : cfg;
-      const stored = lsGet(`w_${dayNum}_${cfg.item}${cfg.variants ? '_' + cfg.variants[0] : ''}`, null);
-      return {
-        item: cfg.variants ? cfg.variants[0] : cfg.item,
-        variantBase: cfg.item,
-        variants: cfg.variants || null,
-        variantOverrideTarget: cfg.variants ? (active.target || '') : undefined,
-        target: cfg.variants ? undefined : cfg.target,
-        unit: cfg.unit,
-        weightCfg: active.weight,
-        weight: active.weight ? (stored !== null ? stored : active.weight.default) : "BW",
-        reps: active.repDefault,
-        repTop: active.repTop,
-        topOfRange: active.repDefault >= active.repTop ? "Y" : "N",
-        topOverridden: false,
-        notes: "",
-        noteOpen: false,
-      };
-    }),
+                 "Balance (single-leg stance, rest intervals)": false },
+    stretches: makeStretchState(String(dayNum)),
+    entries: exList.map(cfg => buildEntryFromConfig(dayNum, cfg)),
   };
   renderStrength();
+}
+
+function buildEntryFromConfig(dayNum, cfg, variantName) {
+  const isVariant = !!cfg.variants;
+  const chosen = variantName || (isVariant ? cfg.variants[0] : null);
+  const active = isVariant ? cfg.variantOverrides[chosen] : cfg;
+  const wcfg = active.weight;
+  const baseKey = `w_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  let weightVal;
+  if (!wcfg) weightVal = "BW";
+  else if (wcfg.type === "bandmix") weightVal = lsGet(baseKey, null) || defaultBandMix();
+  else weightVal = lsGet(baseKey, null) !== null ? lsGet(baseKey, null) : wcfg.default;
+  return {
+    item: isVariant ? chosen : cfg.item,
+    variantBase: cfg.item,
+    variants: cfg.variants || null,
+    variantOverrideTarget: isVariant ? (active.target || '') : undefined,
+    target: isVariant ? undefined : cfg.target,
+    unit: active.unit || cfg.unit,
+    weightCfg: wcfg,
+    weight: weightVal,
+    reps: [active.repDefault, active.repDefault, active.repDefault],
+    repTop: active.repTop,
+    topOfRange: active.repDefault >= active.repTop ? "Y" : "N",
+    topOverridden: false,
+    notes: "",
+    noteOpen: false,
+    detailOpen: false,
+  };
 }
 
 function renderStrength() {
@@ -271,50 +500,63 @@ function renderStrength() {
   let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Day ${dayNum}</h1>
     <div class="card">
-      <label class="label" style="font-size:13px;color:#6e6e73;">Date</label>
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
     <div class="card">`;
-
   Object.keys(state.checklist).forEach(label => {
     const on = state.checklist[label];
     html += `<div class="toggle-row" style="margin-bottom:8px;">
       <span style="font-size:14px;">${label}</span>
-      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done ✓':'Not done'}</button>
+      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done \u2713':'Not done'}</button>
     </div>`;
   });
   html += `</div>`;
 
   state.entries.forEach((entry, i) => {
-    const cfg = exList[i];
     html += `<div class="card" id="ex-card-${i}">`;
     if (entry.variants) {
-      html += `<div class="ex-name">${entry.variantBase}</div>
+      html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.variantBase}</div>
         <div class="variant-row">
           ${entry.variants.map(v => `<button class="variant-btn ${entry.item===v?'selected':''}" onclick="selectVariant(${i},'${v.replace(/'/g,"\\'")}')">${v}</button>`).join('')}
-        </div>`;
+        </div>
+        <div class="ex-target">Target: ${entry.variantOverrideTarget || ''}</div>`;
     } else {
-      html += `<div class="ex-name">${entry.item}</div><div class="ex-target">Target: ${entry.target}</div>`;
+      html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.item}</div>
+        <div class="ex-target">Target: ${entry.target}</div>`;
     }
-    html += renderExerciseControls(entry, i, cfg);
+    const d = EXERCISE_DETAILS[entry.item];
+    html += `<div style="display:none;" id="detail-ex-${i}">${d ? detailBlockHTML(`ex-${i}`,d.note,d.ref) : ''}</div>`;
+    html += renderExerciseControls(entry, i);
     html += `</div>`;
   });
 
+  html += renderStretchChecklist(state.stretches, 'strength');
   html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
     <div id="status"></div>`;
   app.innerHTML = html;
 }
 
 function renderExerciseControls(entry, i) {
-  let html = entry.variants
-    ? `<div class="ex-target" style="margin-top:0">Target: ${entry.variantOverrideTarget || ''}</div>`
-    : '';
-  // weight row
-  if (entry.weightCfg) {
+  let html = '';
+  if (entry.weightCfg && entry.weightCfg.type === "bandmix") {
+    html += `<div class="stepper-row" style="align-items:flex-start;"><span class="label">Weight</span></div>
+      <div class="bandgrid">
+        ${BAND_TIERS.map(t => `<div class="bandtier">
+          <div class="tlabel">${t}#</div>
+          <div class="mini">
+            <button onclick="adjustBand(${i}, ${t}, -1)">\u2212</button>
+            <span class="v" id="band-${i}-${t}">${entry.weight[t]}</span>
+            <button onclick="adjustBand(${i}, ${t}, 1)">+</button>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div class="band-total" id="band-total-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</div>`;
+  } else if (entry.weightCfg) {
     html += `<div class="stepper-row">
       <span class="label">Weight</span>
       <div class="stepper">
-        <button onclick="adjustWeight(${i}, -${entry.weightCfg.step})">−</button>
+        <button onclick="adjustWeight(${i}, -${entry.weightCfg.step})">\u2212</button>
         <span class="val" id="w-val-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</span>
         <button onclick="adjustWeight(${i}, ${entry.weightCfg.step})">+</button>
       </div>
@@ -322,22 +564,26 @@ function renderExerciseControls(entry, i) {
   } else {
     html += `<div class="stepper-row"><span class="label">Weight</span><span class="val">BW</span></div>`;
   }
-  // reps row
-  html += `<div class="stepper-row">
-      <span class="label">Achieved</span>
-      <div class="stepper">
-        <button onclick="adjustReps(${i}, -1)">−</button>
-        <span class="val" id="r-val-${i}">${fmtReps(entry.unit, entry.reps)}</span>
-        <button onclick="adjustReps(${i}, 1)">+</button>
-      </div>
+
+  html += `<div class="stepper-row" style="align-items:flex-start;"><span class="label">Reps</span></div>
+    <div class="setgrid">
+      ${[0,1,2].map(s => `<div class="setcell">
+        <div class="setlabel">Set ${s+1}</div>
+        <div class="mini">
+          <button onclick="adjustRep(${i},${s},-1)">\u2212</button>
+          <span class="v" id="rep-${i}-${s}">${entry.reps[s]}</span>
+          <button onclick="adjustRep(${i},${s},1)">+</button>
+        </div>
+      </div>`).join('')}
     </div>
+    <div style="font-size:12px;color:#8e8e93;margin-top:-4px;">${entry.unit}</div>
     <div>
       <span class="badge ${entry.topOfRange==='Y'?'top':''}" id="top-badge-${i}" onclick="toggleTopOverride(${i})">
         Top of Range: ${entry.topOfRange}
       </span>
     </div>
     <div>
-      <a class="note-link" onclick="toggleNote(${i})">${entry.noteOpen?'Hide note':'+ note (variant used, pain, etc.)'}</a>
+      <a class="note-link" onclick="toggleNote(${i})">${entry.noteOpen?'Hide note':'+ note (pain, form, etc.)'}</a>
       ${entry.noteOpen ? `<input class="note-field" id="note-${i}" type="text" value="${entry.notes.replace(/"/g,'&quot;')}" oninput="state.entries[${i}].notes=this.value">` : ''}
     </div>`;
   return html;
@@ -347,42 +593,34 @@ function toggleChecklist(label) { state.checklist[label] = !state.checklist[labe
 
 function selectVariant(i, variantName) {
   const cfg = STRENGTH_DAYS[state.day][i];
-  const ov = cfg.variantOverrides[variantName];
-  const stored = lsGet(`w_${state.day}_${cfg.item}_${variantName}`, null);
-  state.entries[i] = {
-    item: variantName, variantBase: cfg.item, variants: cfg.variants,
-    variantOverrideTarget: ov.target || '',
-    unit: cfg.unit,
-    weightCfg: ov.weight,
-    weight: ov.weight ? (stored !== null ? stored : ov.weight.default) : "BW",
-    reps: ov.repDefault, repTop: ov.repTop,
-    topOfRange: ov.repDefault >= ov.repTop ? "Y" : "N",
-    topOverridden: false, notes: state.entries[i].notes || "", noteOpen: state.entries[i].noteOpen || false,
-  };
+  const oldNotes = state.entries[i].notes, oldNoteOpen = state.entries[i].noteOpen;
+  state.entries[i] = buildEntryFromConfig(state.day, cfg, variantName);
+  state.entries[i].notes = oldNotes; state.entries[i].noteOpen = oldNoteOpen;
   renderStrength();
 }
 
 function adjustWeight(i, delta) {
   const entry = state.entries[i];
-  entry.weight = clamp(Math.round((entry.weight + delta) * 100) / 100, entry.weightCfg.min, entry.weightCfg.max);
+  entry.weight = clamp(Math.round((entry.weight + delta) * 10) / 10, entry.weightCfg.min, entry.weightCfg.max);
   document.getElementById(`w-val-${i}`).textContent = fmtWeight(entry.weightCfg, entry.weight);
-  const cfg = STRENGTH_DAYS[state.day][i];
-  const key = `w_${state.day}_${cfg.item}${entry.variants ? '_' + entry.item : ''}`;
-  lsSet(key, entry.weight);
 }
-
-function adjustReps(i, delta) {
+function adjustBand(i, tier, delta) {
+  const entry = state.entries[i];
+  entry.weight[tier] = clamp((entry.weight[tier] || 0) + delta, 0, BAND_MAX_PER_TIER);
+  document.getElementById(`band-${i}-${tier}`).textContent = entry.weight[tier];
+  document.getElementById(`band-total-${i}`).textContent = fmtWeight(entry.weightCfg, entry.weight);
+}
+function adjustRep(i, setIdx, delta) {
   const entry = state.entries[i];
   const cfg = STRENGTH_DAYS[state.day][i];
   const bounds = entry.variants ? cfg.variantOverrides[entry.item] : cfg;
-  entry.reps = clamp(entry.reps + delta, bounds.repMin, bounds.repMax);
-  document.getElementById(`r-val-${i}`).textContent = fmtReps(entry.unit, entry.reps);
+  entry.reps[setIdx] = clamp(entry.reps[setIdx] + delta, bounds.repMin, bounds.repMax);
+  document.getElementById(`rep-${i}-${setIdx}`).textContent = entry.reps[setIdx];
   if (!entry.topOverridden) {
-    entry.topOfRange = entry.reps >= entry.repTop ? "Y" : "N";
+    entry.topOfRange = entry.reps.every(r => r >= entry.repTop) ? "Y" : "N";
     updateTopBadge(i);
   }
 }
-
 function toggleTopOverride(i) {
   const entry = state.entries[i];
   entry.topOfRange = entry.topOfRange === "Y" ? "N" : "Y";
@@ -396,32 +634,51 @@ function updateTopBadge(i) {
 }
 function toggleNote(i) { state.entries[i].noteOpen = !state.entries[i].noteOpen; renderStrength(); }
 
+function persistStrengthBaselines() {
+  state.entries.forEach((entry, i) => {
+    if (!entry.weightCfg) return;
+    const key = `w_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+    lsSet(key, entry.weight);
+  });
+}
+
 function buildStrengthPayload() {
   const entries = [];
   Object.keys(state.checklist).forEach(label => {
     entries.push({ item: label, category: "checklist", done: state.checklist[label] });
   });
   state.entries.forEach(e => {
-    entries.push({
+    const rec = {
       item: e.item, category: "exercise",
       target: e.variantOverrideTarget || e.target || "",
-      weight: String(e.weight), reps_or_time: String(e.reps),
+      weight: !e.weightCfg ? "BW" : (e.weightCfg.type === "bandmix" ? String(bandTotal(e.weight)) : String(e.weight)),
+      reps_or_time: e.reps.map(String),
       top_of_range: e.topOfRange, notes: e.notes || "",
-    });
+    };
+    if (e.weightCfg && e.weightCfg.type === "bandmix") {
+      const breakdown = {};
+      BAND_TIERS.forEach(t => { if (e.weight[t] > 0) breakdown[String(t)] = e.weight[t]; });
+      rec.band_breakdown = breakdown;
+    }
+    entries.push(rec);
   });
-  return { schema_version: "1.0", date: state.date, day_type: "strength", day_number: state.day, entries };
+  state.stretches.forEach(s => {
+    entries.push({ item: s.item, category: "stretch", done: s.done });
+  });
+  return { schema_version: "1.1", date: state.date, day_type: "strength", day_number: state.day, entries };
 }
 
 /* ============================== CYCLING ============================== */
 
 function goCycling(dayNum) {
-  state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', miles:10, duration:60, notes:'', noteOpen:false };
+  state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', miles:10, duration:60,
+    stretches: makeStretchState('cycling'), notes:'', noteOpen:false };
   renderCycling();
 }
 function renderCycling() {
   const phases = ['Recovery','Half-max','Max'];
-  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
-    <h1>Day ${state.day} — Cycling</h1>
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Day ${state.day} \u2014 Cycling</h1>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
@@ -435,8 +692,8 @@ function renderCycling() {
     <div class="card">
       <div class="stepper-row"><span class="label">Miles</span>
         <div class="stepper">
-          <button onclick="adjMiles(-5)">−5</button>
-          <button onclick="adjMiles(-1)">−1</button>
+          <button onclick="adjMiles(-5)">\u22125</button>
+          <button onclick="adjMiles(-1)">\u22121</button>
           <span class="val" id="miles-val">${state.miles} mi</span>
           <button onclick="adjMiles(1)">+1</button>
           <button onclick="adjMiles(5)">+5</button>
@@ -444,8 +701,8 @@ function renderCycling() {
       </div>
       <div class="stepper-row"><span class="label">Duration</span>
         <div class="stepper">
-          <button onclick="adjDuration(-15)">−15</button>
-          <button onclick="adjDuration(-5)">−5</button>
+          <button onclick="adjDuration(-15)">\u221215</button>
+          <button onclick="adjDuration(-5)">\u22125</button>
           <span class="val" id="dur-val">${state.duration} min</span>
           <button onclick="adjDuration(5)">+5</button>
           <button onclick="adjDuration(15)">+15</button>
@@ -453,44 +710,62 @@ function renderCycling() {
       </div>
       <a class="note-link" onclick="toggleCyclingNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
-    </div>
-    <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    </div>`;
+  html += renderStretchChecklist(state.stretches, 'cyc');
+  html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
     <div id="status"></div>`;
+  app.innerHTML = html;
 }
 function setPhase(p) { state.phase = p; renderCycling(); }
 function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
 function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = state.duration + ' min'; }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
-  return { schema_version:"1.0", date: state.date, day_type:"cycling", day_number: state.day,
-    phase: state.phase, miles: state.miles, duration_min: state.duration, notes: state.notes || "" };
+  return { schema_version:"1.1", date: state.date, day_type:"cycling", day_number: state.day,
+    phase: state.phase, miles: state.miles, duration_min: state.duration,
+    stretches: state.stretches.map(s => ({ item: s.item, done: s.done })),
+    notes: state.notes || "" };
 }
 
 /* ============================== YOGA ============================== */
 
-function goYoga() { state = { screen:'yoga', date: todayLocal(), completed: true, notes:'', noteOpen:false }; renderYoga(); }
+function goYoga() {
+  state = { screen:'yoga', date: todayLocal(),
+    poses: YOGA_POSES.map(p => ({ pose: p.pose, done: false })), notes:'', noteOpen:false };
+  renderYoga();
+}
 function renderYoga() {
-  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
-    <h1>Day 7 — Yoga</h1>
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Day 7 \u2014 Yoga</h1>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
-    <div class="card">
+    <div class="card"><div class="card-title">Poses</div>`;
+  state.poses.forEach((p, i) => {
+    const d = YOGA_POSES[i];
+    html += `<div class="check-item">
       <div class="toggle-row">
-        <span>Completed</span>
-        <button class="toggle-btn ${state.completed?'on':''}" onclick="toggleYogaDone()">${state.completed?'Yes ✓':'No'}</button>
+        <span class="name" onclick="toggleDetail('yoga-${i}')">${p.pose}</span>
+        <button class="toggle-btn ${p.done?'on':''}" onclick="toggleYogaPose(${i})">${p.done?'Done \u2713':'Not done'}</button>
       </div>
+      <div style="display:none;" id="detail-yoga-${i}">${detailBlockHTML(`yoga-${i}`, d.note, d.ref, d.dur)}</div>
+    </div>`;
+  });
+  html += `</div>
+    <div class="card">
       <a class="note-link" onclick="toggleYogaNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
     <div id="status"></div>`;
+  app.innerHTML = html;
 }
-function toggleYogaDone() { state.completed = !state.completed; renderYoga(); }
+function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
 function buildYogaPayload() {
-  return { schema_version:"1.0", date: state.date, day_type:"yoga", completed: state.completed, notes: state.notes || "" };
+  return { schema_version:"1.1", date: state.date, day_type:"yoga",
+    poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
 }
 
 /* ============================== ACHILLES CHECK ============================== */
@@ -526,7 +801,7 @@ function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
 function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
 function buildAchillesPayload() {
-  return { schema_version:"1.0", date: state.date, day_type:"achilles_check",
+  return { schema_version:"1.1", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
@@ -536,7 +811,7 @@ function goRom() { state = { screen:'rom', date: todayLocal(), distance: 5.5, no
 function renderRom() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Hip Hinge ROM Check</h1>
-    <p class="sub">Every 4–6 weeks.</p>
+    <p class="sub">Every 4\u20136 weeks.</p>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
@@ -544,7 +819,7 @@ function renderRom() {
     <div class="card">
       <div class="stepper-row"><span class="label">Distance</span>
         <div class="stepper">
-          <button onclick="adjRom(-0.5)">−</button>
+          <button onclick="adjRom(-0.5)">\u2212</button>
           <span class="val" id="rom-val">${state.distance} in</span>
           <button onclick="adjRom(0.5)">+</button>
         </div>
@@ -558,7 +833,7 @@ function renderRom() {
 function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
 function buildRomPayload() {
-  return { schema_version:"1.0", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+  return { schema_version:"1.1", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
 /* ============================== REVIEW / SHARE ============================== */
@@ -589,9 +864,11 @@ function showReview() {
     <div class="card"><pre class="json-preview">${JSON.stringify(payload, null, 2)}</pre></div>
     <button class="btn" onclick="doShare('${filenameBase}')">Share via Mail</button>
     <button class="btn secondary" onclick="backToEntry()">Back to Edit</button>
+    <button class="btn secondary" onclick="goHome()">Home</button>
     <div id="status"></div>`;
 }
 function doShare(filenameBase) {
+  if (state._returnScreen === 'strength') persistStrengthBaselines();
   const [payload] = currentPayloadAndName();
   shareJSON(payload, filenameBase, 'status');
 }
