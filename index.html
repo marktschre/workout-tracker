@@ -39,7 +39,7 @@
   }
   .detail-block a { color: #0071e3; font-weight: 600; display: inline-block; margin-top: 6px; }
   .stepper-row { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; }
-  .stepper-row .label { font-size: 14px; color: #48484a; width: 60px; flex-shrink: 0; }
+  .stepper-row .label { font-size: 14px; color: #48484a; flex-shrink: 0; margin-right: 8px; }
   .stepper { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
   .stepper button {
     width: 34px; height: 34px; border-radius: 9px; border: none; background: #e5e5ea;
@@ -131,7 +131,7 @@ const EXERCISE_DETAILS = {
   "DB Overhead Press": { note:"Core braced \u2014 no back hyperextension, seated or standing.", ref:"https://weighttraining.guide/exercises/seated-dumbbell-overhead-press/" },
   "Band Face Pull": { note:"Precision movement, not loaded; shoulder health.", ref:"https://musclewiki.com/exercise/band-face-pull" },
   "DB Curl": { note:"Full extension at bottom, peak contraction at top; no swing.", ref:"https://exrx.net/WeightExercises/Biceps/DBCurl" },
-  "DB RDL (mid-shin)": { note:"Hinge to mid-shin only (flexibility limit); posterior chain.", ref:"https://exrx.net/WeightExercises/OlympicLifts/RomanianDeadlift" },
+  "DB Romanian Dead Lift": { note:"Hinge to mid-shin only (flexibility limit); posterior chain.", ref:"https://exrx.net/WeightExercises/OlympicLifts/RomanianDeadlift" },
   "Reverse Lunge": { note:"Shallow rear-knee drop; front shin vertical; low Achilles dorsiflexion.", ref:"https://exrx.net/WeightExercises/Quadriceps/DBRearLunge" },
   "Bird Dog": { note:"Anti-extension/rotation; opposite arm-leg reach, neutral spine, no twist.", ref:"https://exrx.net/WeightExercises/ErectorSpinae/BWBirdDog" },
   "Ring Row": { note:"Scalable via foot position (more horizontal = harder).", ref:"https://gmb.io/rings/" },
@@ -182,14 +182,14 @@ const BAND_MAX_PER_TIER = 4;
 const STRENGTH_DAYS = {
   1: [
     { item:"Goblet Squat", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{type:"simple",min:15,max:45,step:5,default:30,unit:"lbs"} },
-    { item:"DB Step-Up", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps",
-      weight:{type:"simple",min:0,max:25,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
-    { item:"Pull-Up", target:"Max (target 5-10)", repMin:0, repMax:20, repDefault:5, repTop:10, unit:"reps",
-      weight:{type:"simple",min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+      weight:{type:"simple",min:0,max:120,step:10,default:30,unit:"lbs",bwLabel:"BW",labelSuffix:" (total)"} },
+    { item:"DB Step-Up", target:"10", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps/leg",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Pull-Up", target:"6-12", repMin:0, repMax:16, repDefault:6, repTop:12, unit:"reps",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
     { item:"Weighted Sit-Up", target:"15-20", repMin:8, repMax:25, repDefault:15, repTop:20, unit:"reps",
-      weight:{type:"simple",min:0,max:15,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
-    { item:"Side Plank", target:"20-30s/side", repMin:10, repMax:45, repDefault:20, repTop:30, unit:"sec/side",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
+    { item:"Side Plank", target:"20-30", repMin:10, repMax:45, repDefault:20, repTop:30, unit:"sec/side",
       weight:null },
   ],
   3: [
@@ -199,41 +199,41 @@ const STRENGTH_DAYS = {
         "Seated Band Row": { target:"10-12", repMin:6,repMax:16,repDefault:10,repTop:12,
           weight:{type:"bandmix"} },
         "DB Bent-Over Row": { target:"10-12", repMin:6,repMax:16,repDefault:10,repTop:12,
-          weight:{type:"simple",min:15,max:40,step:5,default:30,unit:"lbs/hand"} },
+          weight:{type:"simple",min:0,max:60,step:5,default:30,unit:"lbs/hand",bwLabel:"BW"} },
       } },
-    { item:"Dip", target:"8-12 (Ring) / 15-20 (Push-Up)", unit:"reps",
+    { item:"Dip", target:"8-12", unit:"reps",
       variants:["Ring Dip","Push-Up"],
       variantOverrides: {
         "Ring Dip": { target:"8-12", repMin:6,repMax:16,repDefault:8,repTop:12, weight:null },
-        "Push-Up": { target:"15-20 or near-failure", repMin:8,repMax:30,repDefault:15,repTop:20, weight:null },
+        "Push-Up": { target:"15-20", repMin:8,repMax:30,repDefault:15,repTop:20, weight:null },
       } },
     { item:"DB Overhead Press", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{type:"simple",min:10,max:35,step:5,default:20,unit:"lbs/hand"} },
+      weight:{type:"simple",min:0,max:60,step:5,default:20,unit:"lbs/hand",bwLabel:"BW"} },
     { item:"Band Face Pull", target:"15-20", repMin:10, repMax:25, repDefault:15, repTop:20, unit:"reps",
       weight:{type:"bandmix"} },
-    { item:"Pallof Press", target:"10-12/side", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps/side",
+    { item:"Pallof Press", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps/side",
       weight:{type:"bandmix"} },
   ],
   4: [
-    { item:"DB RDL (mid-shin)", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{type:"simple",min:15,max:45,step:5,default:30,unit:"lbs/hand"} },
-    { item:"Reverse Lunge", target:"10/leg", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps",
-      weight:{type:"simple",min:0,max:30,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
-    { item:"Pull-Up", target:"Max (target 5-10)", repMin:0, repMax:20, repDefault:5, repTop:10, unit:"reps",
-      weight:{type:"simple",min:0,max:45,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+    { item:"DB Romanian Dead Lift", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
+      weight:{type:"simple",min:0,max:60,step:5,default:30,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Reverse Lunge", target:"10", repMin:6, repMax:16, repDefault:10, repTop:10, unit:"reps/leg",
+      weight:{type:"simple",min:0,max:60,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Pull-Up", target:"6-12", repMin:0, repMax:16, repDefault:6, repTop:12, unit:"reps",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
     { item:"Weighted Sit-Up", target:"15-20", repMin:8, repMax:25, repDefault:15, repTop:20, unit:"reps",
-      weight:{type:"simple",min:0,max:15,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
-    { item:"Bird Dog", target:"8-10/side", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
+    { item:"Bird Dog", target:"8-10", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
       weight:null },
   ],
   6: [
     { item:"Ring Row", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
       weight:null },
-    { item:"Push-Up", target:"15-20 or near-failure", repMin:8, repMax:30, repDefault:15, repTop:20, unit:"reps",
+    { item:"Push-Up", target:"15-20", repMin:8, repMax:30, repDefault:15, repTop:20, unit:"reps",
       weight:null },
     { item:"DB Curl", target:"10-12", repMin:6, repMax:16, repDefault:10, repTop:12, unit:"reps",
-      weight:{type:"simple",min:10,max:25,step:5,default:15,unit:"lbs/hand"} },
-    { item:"Bird Dog", target:"8-10/side", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
+      weight:{type:"simple",min:0,max:60,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Bird Dog", target:"8-10", repMin:4, repMax:16, repDefault:8, repTop:10, unit:"reps/side",
       weight:null },
   ],
 };
@@ -336,6 +336,7 @@ function renderHome() {
     <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check</button>
     <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
   `;
+  window.scrollTo(0, 0);
 }
 function goHome() { state = { screen: 'home' }; renderHome(); }
 
@@ -414,7 +415,9 @@ function renderSettings() {
       <input type="file" accept="application/json" id="import-file" style="display:none" onchange="handleImportFile(this)">
       <button class="btn secondary" onclick="document.getElementById('import-file').click()">Choose File to Import</button>
     </div>
-    <div id="settings-status"></div>`;
+    <div id="settings-status"></div>
+    <button class="btn" onclick="goHome()">Home</button>`;
+  window.scrollTo(0, 0);
 }
 
 /* ============================== STRETCH CHECKLIST (shared) ============================== */
@@ -471,10 +474,11 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
   const active = isVariant ? cfg.variantOverrides[chosen] : cfg;
   const wcfg = active.weight;
   const baseKey = `w_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  const stored = lsGet(baseKey, null);
   let weightVal;
   if (!wcfg) weightVal = "BW";
-  else if (wcfg.type === "bandmix") weightVal = lsGet(baseKey, null) || defaultBandMix();
-  else weightVal = lsGet(baseKey, null) !== null ? lsGet(baseKey, null) : wcfg.default;
+  else if (wcfg.type === "bandmix") weightVal = (stored && typeof stored === 'object') ? stored : defaultBandMix();
+  else weightVal = (typeof stored === 'number') ? stored : wcfg.default;
   return {
     item: isVariant ? chosen : cfg.item,
     variantBase: cfg.item,
@@ -520,10 +524,10 @@ function renderStrength() {
         <div class="variant-row">
           ${entry.variants.map(v => `<button class="variant-btn ${entry.item===v?'selected':''}" onclick="selectVariant(${i},'${v.replace(/'/g,"\\'")}')">${v}</button>`).join('')}
         </div>
-        <div class="ex-target">Target: ${entry.variantOverrideTarget || ''}</div>`;
+        <div class="ex-target">Target: ${entry.variantOverrideTarget || ''} ${entry.unit || ''}</div>`;
     } else {
       html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.item}</div>
-        <div class="ex-target">Target: ${entry.target}</div>`;
+        <div class="ex-target">Target: ${entry.target} ${entry.unit}</div>`;
     }
     const d = EXERCISE_DETAILS[entry.item];
     html += `<div style="display:none;" id="detail-ex-${i}">${d ? detailBlockHTML(`ex-${i}`,d.note,d.ref) : ''}</div>`;
@@ -533,8 +537,10 @@ function renderStrength() {
 
   html += renderStretchChecklist(state.stretches, 'strength');
   html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
 function renderExerciseControls(entry, i) {
@@ -554,7 +560,7 @@ function renderExerciseControls(entry, i) {
       <div class="band-total" id="band-total-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</div>`;
   } else if (entry.weightCfg) {
     html += `<div class="stepper-row">
-      <span class="label">Weight</span>
+      <span class="label">Weight${entry.weightCfg.labelSuffix || ''}</span>
       <div class="stepper">
         <button onclick="adjustWeight(${i}, -${entry.weightCfg.step})">\u2212</button>
         <span class="val" id="w-val-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</span>
@@ -713,8 +719,10 @@ function renderCycling() {
     </div>`;
   html += renderStretchChecklist(state.stretches, 'cyc');
   html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 function setPhase(p) { state.phase = p; renderCycling(); }
 function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
@@ -758,8 +766,10 @@ function renderYoga() {
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
@@ -795,7 +805,9 @@ function renderAchilles() {
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  window.scrollTo(0, 0);
 }
 function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
@@ -828,7 +840,9 @@ function renderRom() {
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  window.scrollTo(0, 0);
 }
 function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
@@ -864,8 +878,9 @@ function showReview() {
     <div class="card"><pre class="json-preview">${JSON.stringify(payload, null, 2)}</pre></div>
     <button class="btn" onclick="doShare('${filenameBase}')">Share via Mail</button>
     <button class="btn secondary" onclick="backToEntry()">Back to Edit</button>
-    <button class="btn secondary" onclick="goHome()">Home</button>
+    <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  window.scrollTo(0, 0);
 }
 function doShare(filenameBase) {
   if (state._returnScreen === 'strength') persistStrengthBaselines();
