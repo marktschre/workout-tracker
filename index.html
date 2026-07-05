@@ -256,6 +256,11 @@ function lsSet(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+function fmtDuration(mins) {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
 
 function bandTotal(mix) {
   return BAND_TIERS.reduce((sum, t) => sum + t * (mix[t] || 0), 0);
@@ -709,7 +714,7 @@ function renderCycling() {
         <div class="stepper">
           <button onclick="adjDuration(-15)">\u221215</button>
           <button onclick="adjDuration(-5)">\u22125</button>
-          <span class="val" id="dur-val">${state.duration} min</span>
+          <span class="val" id="dur-val">${fmtDuration(state.duration)}</span>
           <button onclick="adjDuration(5)">+5</button>
           <button onclick="adjDuration(15)">+15</button>
         </div>
@@ -726,7 +731,7 @@ function renderCycling() {
 }
 function setPhase(p) { state.phase = p; renderCycling(); }
 function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
-function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = state.duration + ' min'; }
+function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
   return { schema_version:"1.1", date: state.date, day_type:"cycling", day_number: state.day,
