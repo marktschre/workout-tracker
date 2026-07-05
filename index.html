@@ -341,9 +341,8 @@ function renderHome() {
     <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check</button>
     <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
   `;
-  window.scrollTo(0, 0);
 }
-function goHome() { state = { screen: 'home' }; renderHome(); }
+function goHome() { state = { screen: 'home' }; renderHome(); window.scrollTo(0, 0); }
 
 /* ============================== SETTINGS: BACKUP / RESTORE ============================== */
 
@@ -403,7 +402,7 @@ function handleImportFile(inputEl) {
   };
   reader.readAsText(file);
 }
-function goSettings() { state = { screen: 'settings' }; renderSettings(); }
+function goSettings() { state = { screen: 'settings' }; renderSettings(); window.scrollTo(0, 0); }
 function renderSettings() {
   const count = Object.keys(gatherSettingsData()).length;
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
@@ -422,7 +421,6 @@ function renderSettings() {
     </div>
     <div id="settings-status"></div>
     <button class="btn" onclick="goHome()">Home</button>`;
-  window.scrollTo(0, 0);
 }
 
 /* ============================== STRETCH CHECKLIST (shared) ============================== */
@@ -471,6 +469,7 @@ function goStrength(dayNum) {
     entries: exList.map(cfg => buildEntryFromConfig(dayNum, cfg)),
   };
   renderStrength();
+  window.scrollTo(0, 0);
 }
 
 function buildEntryFromConfig(dayNum, cfg, variantName) {
@@ -545,7 +544,6 @@ function renderStrength() {
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
-  window.scrollTo(0, 0);
 }
 
 function renderExerciseControls(entry, i) {
@@ -685,6 +683,7 @@ function goCycling(dayNum) {
   state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', miles:10, duration:60,
     stretches: makeStretchState('cycling'), notes:'', noteOpen:false };
   renderCycling();
+  window.scrollTo(0, 0);
 }
 function renderCycling() {
   const phases = ['Recovery','Half-max','Max'];
@@ -727,7 +726,6 @@ function renderCycling() {
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
-  window.scrollTo(0, 0);
 }
 function setPhase(p) { state.phase = p; renderCycling(); }
 function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
@@ -746,6 +744,7 @@ function goYoga() {
   state = { screen:'yoga', date: todayLocal(),
     poses: YOGA_POSES.map(p => ({ pose: p.pose, done: false })), notes:'', noteOpen:false };
   renderYoga();
+  window.scrollTo(0, 0);
 }
 function renderYoga() {
   let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
@@ -774,7 +773,6 @@ function renderYoga() {
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
-  window.scrollTo(0, 0);
 }
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
@@ -785,7 +783,7 @@ function buildYogaPayload() {
 
 /* ============================== ACHILLES CHECK ============================== */
 
-function goAchilles() { state = { screen:'achilles', date: todayLocal(), pain: 0, increased: false, notes:'', noteOpen:false }; renderAchilles(); }
+function goAchilles() { state = { screen:'achilles', date: todayLocal(), pain: 0, increased: false, notes:'', noteOpen:false }; renderAchilles(); window.scrollTo(0, 0); }
 function renderAchilles() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Weekly Achilles Check</h1>
@@ -812,7 +810,6 @@ function renderAchilles() {
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
-  window.scrollTo(0, 0);
 }
 function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
@@ -824,7 +821,7 @@ function buildAchillesPayload() {
 
 /* ============================== ROM CHECK ============================== */
 
-function goRom() { state = { screen:'rom', date: todayLocal(), distance: 5.5, notes:'', noteOpen:false }; renderRom(); }
+function goRom() { state = { screen:'rom', date: todayLocal(), distance: 5.5, notes:'', noteOpen:false }; renderRom(); window.scrollTo(0, 0); }
 function renderRom() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Hip Hinge ROM Check</h1>
@@ -847,7 +844,6 @@ function renderRom() {
     <button class="btn" onclick="showReview()">Review &amp; Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
-  window.scrollTo(0, 0);
 }
 function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
@@ -874,6 +870,7 @@ function backToEntry() {
     case 'achilles': renderAchilles(); break;
     case 'rom': renderRom(); break;
   }
+  window.scrollTo(0, 0);
 }
 function showReview() {
   state._returnScreen = state.screen;
