@@ -241,10 +241,10 @@ const STRENGTH_DAYS = {
       tempo:"2-3 sec down",
       weight:{type:"simple",min:0,max:60,step:5,default:20,unit:"lbs/hand",bwLabel:"BW"} },
     { item:"Band Face Pull", target:"15-20", repDefault:15, repTop:20, unit:"reps",
-      tempo:"2-3 sec both directions",
+      tempo:"2-3 sec both directions", resistanceNote:"Lightest 1-2 bands",
       weight:{type:"bandmix"} },
     { item:"Pallof Press", target:"10-12", repDefault:10, repTop:12, unit:"reps/side",
-      tempo:"2 sec hold at full extension",
+      tempo:"2 sec hold at full extension", resistanceNote:"Light-moderate band",
       weight:{type:"bandmix"} },
   ],
   4: [
@@ -543,6 +543,7 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
     target: isVariant ? undefined : cfg.target,
     unit: active.unit || cfg.unit,
     tempo: active.tempo,
+    resistanceNote: active.resistanceNote,
     timed: !!cfg.timed,
     heights: cfg.heights || null,
     height: heightVal,
@@ -588,7 +589,7 @@ function renderStrength() {
         <div class="ex-target">Target: ${entry.variantOverrideTarget || ''} ${entry.unit || ''}</div>`;
     } else {
       html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.item}</div>
-        <div class="ex-target">Target: ${entry.target} ${entry.unit}</div>`;
+        <div class="ex-target">Target: ${entry.target} ${entry.unit}${entry.resistanceNote ? ` (${entry.resistanceNote})` : ''}</div>`;
     }
     const d = EXERCISE_DETAILS[entry.item];
     html += `<div style="display:none;" id="detail-ex-${i}">${d ? detailBlockHTML(`ex-${i}`,d.note,d.ref) : ''}</div>`;
