@@ -14,7 +14,7 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     max-width: 520px; margin: 0 auto;
-    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(80px + env(safe-area-inset-bottom, 0px));
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(96px + env(safe-area-inset-bottom, 0px));
     background: #f2f2f7; color: #1d1d1f;
   }
   h1 { font-size: 22px; margin: 8px 0 2px; }
@@ -41,9 +41,13 @@
     font-size: 13px; color: #3a3a3c; line-height: 1.4;
   }
   .detail-block a { color: #0071e3; font-weight: 600; display: inline-block; margin-top: 6px; }
-  .stepper-row { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; }
-  .stepper-row .label { font-size: 14px; color: #48484a; flex-shrink: 0; margin-right: 8px; }
-  .stepper { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+  .stepper-row { display: grid; grid-template-columns: 112px 1fr; align-items: center; margin: 8px 0; column-gap: 8px; }
+  .stepper-row .label { font-size: 14px; color: #48484a; }
+  .stepper {
+    display: grid; grid-template-columns: 34px 34px 68px 34px 34px; column-gap: 8px;
+    align-items: center; justify-items: center; justify-self: end;
+  }
+  .stepper .ph { width: 34px; height: 34px; }
   .stepper button {
     width: 34px; height: 34px; border-radius: 9px; border: none; background: #e5e5ea;
     font-size: 18px; font-weight: 600; color: #1d1d1f; line-height: 1;
@@ -51,6 +55,8 @@
   .stepper button:active { background: #d1d1d6; }
   .stepper .val { min-width: 68px; text-align: center; font-size: 15px; font-weight: 600; }
   .setgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .setgrid-row2 { display: flex; justify-content: center; gap: 6px; margin: 0 0 8px; }
+  .setgrid-row2 .setcell { flex: 0 0 calc((100% - 12px) / 3); }
   .setcell { text-align: center; }
   .setcell .setlabel { font-size: 11px; color: #8e8e93; margin-bottom: 3px; }
   .setcell .mini { display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -121,9 +127,15 @@
     background: white; border-radius: 20px; padding: 24px; text-align: center;
     width: 260px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   }
-  .timer-label { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
   .timer-elapsed { font-size: 22px; font-weight: 700; margin: 14px 0; font-variant-numeric: tabular-nums; }
   .btn.secondary.small { font-size: 14px; }
+  .timer-fab-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+    background: rgba(242,242,247,0.92); backdrop-filter: blur(8px);
+    border-top: 1px solid #d1d1d6;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .timer-fab-bar .btn { max-width: 520px; margin: 0 auto; }
 </style>
 </head>
 <body>
@@ -153,7 +165,7 @@ const EXERCISE_DETAILS = {
 };
 
 const STRETCH_DETAILS = {
-  "Standing Quadriceps Stretch": { dur:"2\u00d720-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
+  "Standing Quads Stretch": { dur:"2\u00d720-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
   "Lying Glute Stretch": { dur:"2\u00d720-30s", note:"Glute / piriformis.", ref:"https://exrx.net/Stretches/GluteusMaximus/Lying" },
   "Seated Groin Stretch": { dur:"2\u00d720-30s", note:"Adductors. Soles together, pull heels toward groin, press knees toward floor with elbows \u2014 don't force.", ref:"https://exrx.net/Stretches/HipAdductors/SeatedGroinFloor" },
   "Standing Hamstring Stretch (forward fold)": { dur:"2\u00d720-30s", note:"Hamstring. Hand-supported on thighs/shins as the fold develops \u2014 do not hang unsupported.", ref:"https://exrx.net/Stretches/Hamstrings/Standing" },
@@ -161,7 +173,7 @@ const STRETCH_DETAILS = {
   "Wall Straight Leg Calf Stretch": { dur:"2\u00d720-30s", note:"Gastrocnemius. Rear knee straight, heel down.", ref:"https://exrx.net/Stretches/Gastrocnemius/Wall" },
   "Wall Bent Knee Calf Stretch": { dur:"2\u00d720-30s", note:"Soleus. Rear knee bent \u2014 isolates soleus from gastrocnemius.", ref:"https://exrx.net/Stretches/Soleus/Wall" },
   "Kneeling Hip Flexor Stretch": { dur:"2\u00d720-30s", note:"Hip flexor (iliopsoas). Torso upright, push hips forward \u2014 don't lean forward from the torso.", ref:"https://exrx.net/Stretches/HipFlexors/KneelingHipFlexor" },
-  "Seated Cross Twist (IT Band)": { dur:"2\u00d715-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.kneepaincentersofamerica.com/blog/it-band-stretches-pdf" },
+  "Seated Cross Twist (IT Band)": { dur:"2\u00d715-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.mayoclinic.org/healthy-lifestyle/stress-management/multimedia/seated-spinal-twist/vid-20453586" },
   "Doorway Chest Stretch": { dur:"2\u00d720-30s", note:"Chest (pectoralis). Elbow at shoulder height for balanced upper/lower chest stretch.", ref:"https://exrx.net/Stretches/ChestGeneral/Doorway" },
   "Rear Deltoid Stretch (cross-body)": { dur:"2\u00d720-30s", note:"Rear deltoid / posterior shoulder. Arm across chest, opposite hand on elbow.", ref:"https://exrx.net/Stretches/DeltoidPosterior/RearDelt" },
   "Overhead Triceps Stretch": { dur:"2\u00d720-30s", note:"Triceps. Forearm behind head, opposite hand pulls elbow gently.", ref:"https://exrx.net/Stretches/Triceps/Overhead" },
@@ -170,11 +182,11 @@ const STRETCH_DETAILS = {
 };
 
 const STRETCH_LISTS = {
-  "1": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Quadriceps Stretch","Standing Hamstring Stretch (forward fold)","Seated Groin Stretch","Lying Glute Stretch","Doorway Hamstring & Hip Flexor Stretch"],
+  "1": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Quads Stretch","Standing Hamstring Stretch (forward fold)","Seated Groin Stretch","Lying Glute Stretch","Doorway Hamstring & Hip Flexor Stretch"],
   "3": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
   "4": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Hamstring Stretch (forward fold)","Lying Glute Stretch","Doorway Hamstring & Hip Flexor Stretch","Child's Pose (modified, wide-knee)"],
   "6": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
-  "cycling": ["Standing Quadriceps Stretch","Kneeling Hip Flexor Stretch","Seated Cross Twist (IT Band)"],
+  "cycling": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Quads Stretch","Standing Hamstring Stretch (forward fold)","Kneeling Hip Flexor Stretch","Seated Cross Twist (IT Band)"],
 };
 
 const YOGA_POSES = [
@@ -346,6 +358,29 @@ async function shareJSON(payload, filenameBase, statusElId) {
   }
 }
 
+/* ============================== SHARED: STEPPER ROW ============================== */
+/* Every ±stepper on every page renders through this one function so the "−", value, and
+   "+" always land in the same fixed grid columns regardless of label length or whether a
+   coarse ±± pair is present — a 2-button row and a 4-button row line up on the inner
+   −/value/+ columns instead of both being right-flush (which would misalign them). Missing
+   coarse buttons are replaced with an empty placeholder that reserves the same grid column,
+   rather than omitted, so the fine buttons don't shift. */
+function stepperRowHTML(label, valId, valText, opts) {
+  const mc = opts.minusCoarse
+    ? `<button onclick="${opts.minusCoarse.onclick}">${opts.minusCoarse.label}</button>` : `<span class="ph"></span>`;
+  const pc = opts.plusCoarse
+    ? `<button onclick="${opts.plusCoarse.onclick}">${opts.plusCoarse.label}</button>` : `<span class="ph"></span>`;
+  return `<div class="stepper-row"><span class="label">${label}</span>
+      <div class="stepper">
+        ${mc}
+        <button onclick="${opts.minus.onclick}">${opts.minus.label}</button>
+        <span class="val" id="${valId}">${valText}</span>
+        <button onclick="${opts.plus.onclick}">${opts.plus.label}</button>
+        ${pc}
+      </div>
+    </div>`;
+}
+
 /* ============================== SHARED: DETAIL DRILL-DOWN ============================== */
 
 function detailBlockHTML(id, note, ref, dur) {
@@ -373,10 +408,11 @@ function renderHome() {
       <button class="btn" onclick="goStrength(4)">Day 4</button>
       <button class="btn" onclick="goStrength(6)">Day 6</button>
     </div>
-    <div class="home-section-label">Cycling Days</div>
-    <div class="grid2">
+    <div class="home-section-label">Cardio Days</div>
+    <div class="grid3">
       <button class="btn" onclick="goCycling(2)">Day 2</button>
       <button class="btn" onclick="goCycling(5)">Day 5</button>
+      <button class="btn" onclick="goCycling('Extra')">Extra</button>
     </div>
     <div class="home-section-label">Other</div>
     <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga</button>
@@ -481,7 +517,6 @@ function renderStretchChecklist(stretchArr, prefix) {
         <span class="name" onclick="toggleDetail('${prefix}-str-${i}')">${s.item}</span>
         <button class="toggle-btn ${s.done?'on':''}" onclick="toggleStretch('${prefix}',${i})">${s.done?'Done \u2713':'Not done'}</button>
       </div>
-      <button class="btn secondary small" style="width:auto;padding:6px 14px;margin-top:6px;" onclick="openTimer('${s.item.replace(/'/g,"\\'")}')">\u23f1 Timer</button>
       <div style="display:none;" id="detail-${prefix}-str-${i}">
         ${detailBlockHTML(`${prefix}-str-${i}`.replace('detail-',''), d.note, d.ref, d.dur)}
       </div>
@@ -550,7 +585,7 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
     height: heightVal,
     weightCfg: wcfg,
     weight: weightVal,
-    reps: [active.repDefault, active.repDefault, active.repDefault],
+    reps: [active.repDefault, active.repDefault, active.repDefault, active.repDefault, active.repDefault],
     activeSets: 3,
     repTop: active.repTop,
     topOfRange: active.repDefault >= active.repTop ? "Y" : "N",
@@ -599,9 +634,10 @@ function renderStrength() {
   });
 
   html += renderStretchChecklist(state.stretches, 'strength');
-  html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
+  html += `<button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  html += timerBarHTML();
   app.innerHTML = html;
 }
 
@@ -621,16 +657,12 @@ function renderExerciseControls(entry, i) {
       </div>
       <div class="band-total" id="band-total-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</div>`;
   } else if (entry.weightCfg) {
-    html += `<div class="stepper-row">
-      <span class="label">Weight${entry.weightCfg.labelSuffix || ''}</span>
-      <div class="stepper">
-        <button onclick="adjustWeight(${i}, -${entry.weightCfg.step})">\u2212</button>
-        <span class="val" id="w-val-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</span>
-        <button onclick="adjustWeight(${i}, ${entry.weightCfg.step})">+</button>
-      </div>
-    </div>`;
+    html += stepperRowHTML(`Weight${entry.weightCfg.labelSuffix || ''}`, `w-val-${i}`, fmtWeight(entry.weightCfg, entry.weight), {
+      minus: { onclick: `adjustWeight(${i}, -${entry.weightCfg.step})`, label: '\u2212' },
+      plus: { onclick: `adjustWeight(${i}, ${entry.weightCfg.step})`, label: '+' },
+    });
   } else {
-    html += `<div class="stepper-row"><span class="label">Weight</span><span class="val">BW</span></div>`;
+    html += `<div class="stepper-row"><span class="label">Weight</span><span class="val" style="justify-self:end;">BW</span></div>`;
   }
 
   if (entry.heights) {
@@ -642,21 +674,16 @@ function renderExerciseControls(entry, i) {
     </div>`;
   }
 
-  html += `<div class="stepper-row">
-      <span class="label">Sets</span>
-      <div class="stepper">
-        <button onclick="adjustSets(${i}, -1)">\u2212</button>
-        <span class="val" id="sets-val-${i}">${entry.activeSets}</span>
-        <button onclick="adjustSets(${i}, 1)">+</button>
-      </div>
-    </div>
-    <div class="setgrid" id="setgrid-${i}">${renderSetCells(entry, i)}</div>
+  html += stepperRowHTML('Sets', `sets-val-${i}`, entry.activeSets, {
+      minus: { onclick: `adjustSets(${i}, -1)`, label: '\u2212' },
+      plus: { onclick: `adjustSets(${i}, 1)`, label: '+' },
+    });
+  html += `<div id="setgrid-${i}">${renderSetCells(entry, i)}</div>
     <div style="font-size:12px;color:#8e8e93;margin-top:-4px;">Tempo: ${entry.tempo || '—'}</div>
     <div>
       <span class="badge ${entry.topOfRange==='Y'?'top':''}" id="top-badge-${i}" onclick="toggleTopOverride(${i})">
         Top of Range: ${entry.topOfRange}
       </span>
-      ${entry.timed ? `<button class="btn secondary small" style="display:inline-block;width:auto;padding:6px 14px;margin-left:8px;" onclick="openTimer('${entry.item.replace(/'/g,"\\'")}')">\u23f1 Timer</button>` : ''}
     </div>
     <div>
       <a class="note-link" onclick="toggleNote(${i})">${entry.noteOpen?'Hide note':'+ note (pain, form, etc.)'}</a>
@@ -665,19 +692,26 @@ function renderExerciseControls(entry, i) {
   return html;
 }
 
+function setCellHTML(entry, i, s) {
+  return `<div class="setcell">
+      <div class="setlabel">Set ${s+1}</div>
+      <div class="mini">
+        <button onclick="adjustRep(${i},${s},-1)">\u2212</button>
+        <span class="v" id="rep-${i}-${s}">${entry.reps[s]}</span>
+        <button onclick="adjustRep(${i},${s},1)">+</button>
+      </div>
+    </div>`;
+}
 function renderSetCells(entry, i) {
-  let cells = '';
-  for (let s = 0; s < entry.activeSets; s++) {
-    cells += `<div class="setcell">
-        <div class="setlabel">Set ${s+1}</div>
-        <div class="mini">
-          <button onclick="adjustRep(${i},${s},-1)">\u2212</button>
-          <span class="v" id="rep-${i}-${s}">${entry.reps[s]}</span>
-          <button onclick="adjustRep(${i},${s},1)">+</button>
-        </div>
-      </div>`;
+  let row1 = '';
+  for (let s = 0; s < Math.min(entry.activeSets, 3); s++) row1 += setCellHTML(entry, i, s);
+  let html = `<div class="setgrid">${row1}</div>`;
+  if (entry.activeSets > 3) {
+    let row2 = '';
+    for (let s = 3; s < entry.activeSets; s++) row2 += setCellHTML(entry, i, s);
+    html += `<div class="setgrid-row2">${row2}</div>`;
   }
-  return cells;
+  return html;
 }
 
 function toggleChecklist(label) { state.checklist[label] = !state.checklist[label]; renderStrength(); }
@@ -709,7 +743,7 @@ function adjustBand(i, tier, delta) {
 }
 function adjustSets(i, delta) {
   const entry = state.entries[i];
-  entry.activeSets = clamp(entry.activeSets + delta, 0, 3);
+  entry.activeSets = clamp(entry.activeSets + delta, 0, 5);
   document.getElementById(`sets-val-${i}`).textContent = entry.activeSets;
   document.getElementById(`setgrid-${i}`).innerHTML = renderSetCells(entry, i);
   if (!entry.topOverridden) {
@@ -780,68 +814,73 @@ function buildStrengthPayload() {
   state.stretches.forEach(s => {
     entries.push({ item: s.item, category: "stretch", done: s.done });
   });
-  return { schema_version: "1.4", date: state.date, day_type: "strength", day_number: state.day, entries };
+  return { schema_version: "1.5", date: state.date, day_type: "strength", day_number: state.day, entries };
 }
 
 /* ============================== CYCLING ============================== */
 
 function goCycling(dayNum) {
-  state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', miles:10, duration:60,
+  state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', equipment:'Road', miles:10, duration:60,
     stretches: makeStretchState('cycling'), notes:'', noteOpen:false };
   renderCycling();
   window.scrollTo(0, 0);
 }
 function renderCycling() {
   const phases = ['Recovery','Half-max','Max'];
+  const equipmentOptions = ['Road','Keiser','LifeFitness'];
+  const isExtra = state.day === 'Extra';
   let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
-    <h1>Day ${state.day} \u2014 Cycling</h1>
+    <h1>${isExtra ? 'Extra' : 'Day ' + state.day} \u2014 Cardio</h1>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
-    </div>
-    <div class="card">
+    </div>`;
+  if (!isExtra) {
+    html += `<div class="card">
       <div class="label" style="font-size:14px;margin-bottom:6px;">Rotation Phase</div>
       <div class="grid3">
         ${phases.map(p => `<button class="variant-btn ${state.phase===p?'selected':''}" onclick="setPhase('${p}')">${p}</button>`).join('')}
       </div>
+    </div>`;
+  }
+  html += `<div class="card">
+      <div class="label" style="font-size:14px;margin-bottom:6px;">Equipment</div>
+      <div class="grid3">
+        ${equipmentOptions.map(e => `<button class="variant-btn ${state.equipment===e?'selected':''}" onclick="setEquipment('${e}')">${e}</button>`).join('')}
+      </div>
     </div>
     <div class="card">
-      <div class="stepper-row"><span class="label">Miles</span>
-        <div class="stepper">
-          <button onclick="adjMiles(-5)">\u22125</button>
-          <button onclick="adjMiles(-1)">\u22121</button>
-          <span class="val" id="miles-val">${state.miles} mi</span>
-          <button onclick="adjMiles(1)">+1</button>
-          <button onclick="adjMiles(5)">+5</button>
-        </div>
-      </div>
-      <div class="stepper-row"><span class="label">Duration</span>
-        <div class="stepper">
-          <button onclick="adjDuration(-15)">\u221215</button>
-          <button onclick="adjDuration(-5)">\u22125</button>
-          <span class="val" id="dur-val">${fmtDuration(state.duration)}</span>
-          <button onclick="adjDuration(5)">+5</button>
-          <button onclick="adjDuration(15)">+15</button>
-        </div>
-      </div>
+      ${stepperRowHTML('Miles', 'miles-val', state.miles + ' mi', {
+        minusCoarse: { onclick: 'adjMiles(-5)', label: '\u22125' }, minus: { onclick: 'adjMiles(-1)', label: '\u22121' },
+        plus: { onclick: 'adjMiles(1)', label: '+1' }, plusCoarse: { onclick: 'adjMiles(5)', label: '+5' },
+      })}
+      ${stepperRowHTML('Duration', 'dur-val', fmtDuration(state.duration), {
+        minusCoarse: { onclick: 'adjDuration(-15)', label: '\u221215' }, minus: { onclick: 'adjDuration(-5)', label: '\u22125' },
+        plus: { onclick: 'adjDuration(5)', label: '+5' }, plusCoarse: { onclick: 'adjDuration(15)', label: '+15' },
+      })}
       <a class="note-link" onclick="toggleCyclingNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>`;
   html += renderStretchChecklist(state.stretches, 'cyc');
-  html += `<button class="btn" onclick="showReview()">Review &amp; Share</button>
+  html += `<button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  html += timerBarHTML();
   app.innerHTML = html;
 }
 function setPhase(p) { state.phase = p; renderCycling(); }
+function setEquipment(e) { state.equipment = e; renderCycling(); }
 function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
 function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
-  return { schema_version:"1.4", date: state.date, day_type:"cycling", day_number: state.day,
-    phase: state.phase, miles: state.miles, duration_min: state.duration,
-    stretches: state.stretches.map(s => ({ item: s.item, done: s.done })),
-    notes: state.notes || "" };
+  const rec = { schema_version:"1.5", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
+  if (state.day !== 'Extra') rec.phase = state.phase;
+  rec.equipment = state.equipment;
+  rec.miles = state.miles; rec.duration_min = state.duration;
+  rec.stretches = state.stretches.map(s => ({ item: s.item, done: s.done }));
+  rec.notes = state.notes || "";
+  return rec;
 }
 
 /* ============================== YOGA ============================== */
@@ -867,7 +906,6 @@ function renderYoga() {
         <span class="name" onclick="toggleDetail('yoga-${i}')">${p.pose}</span>
         <button class="toggle-btn ${p.done?'on':''}" onclick="toggleYogaPose(${i})">${p.done?'Done \u2713':'Not done'}</button>
       </div>
-      <button class="btn secondary small" style="width:auto;padding:6px 14px;margin-top:6px;" onclick="openTimer('${p.pose.replace(/'/g,"\\'")}')">\u23f1 Timer</button>
       <div style="display:none;" id="detail-yoga-${i}">${detailBlockHTML(`yoga-${i}`, d.note, d.ref, d.dur)}</div>
     </div>`;
   });
@@ -876,15 +914,16 @@ function renderYoga() {
       <a class="note-link" onclick="toggleYogaNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
-    <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+  html += timerBarHTML();
   app.innerHTML = html;
 }
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
 function buildYogaPayload() {
-  return { schema_version:"1.4", date: state.date, day_type:"yoga",
+  return { schema_version:"1.5", date: state.date, day_type:"yoga",
     poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
 }
 
@@ -914,7 +953,7 @@ function renderAchilles() {
       <a class="note-link" onclick="toggleAchNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
-    <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
 }
@@ -922,7 +961,7 @@ function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
 function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
 function buildAchillesPayload() {
-  return { schema_version:"1.4", date: state.date, day_type:"achilles_check",
+  return { schema_version:"1.5", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
@@ -938,24 +977,20 @@ function renderRom() {
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
     <div class="card">
-      <div class="stepper-row"><span class="label">Distance</span>
-        <div class="stepper">
-          <button onclick="adjRom(-0.5)">\u2212</button>
-          <span class="val" id="rom-val">${state.distance} in</span>
-          <button onclick="adjRom(0.5)">+</button>
-        </div>
-      </div>
+      ${stepperRowHTML('Distance', 'rom-val', state.distance + ' in', {
+        minus: { onclick: 'adjRom(-0.5)', label: '\u2212' }, plus: { onclick: 'adjRom(0.5)', label: '+' },
+      })}
       <a class="note-link" onclick="toggleRomNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
-    <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
 }
 function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
 function buildRomPayload() {
-  return { schema_version:"1.4", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+  return { schema_version:"1.5", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
 /* ============================== BODY METRICS ============================== */
@@ -980,26 +1015,19 @@ function renderBodyMetrics() {
     </div>
     <div class="card">`;
   BODY_METRICS_FIELDS.forEach(f => {
-    html += `<div class="stepper-row">
-      <span class="label">${f.label}</span>
-      <div class="stepper">`;
-    if (f.coarseStep) {
-      html += `<button onclick="adjustBodyMetric('${f.key}', -2)">\u2212\u2212</button>`;
-    }
-    html += `<button onclick="adjustBodyMetric('${f.key}', -1)">\u2212</button>
-        <span class="val" id="bm-val-${f.key}">${fmtBodyMetric(f, state.values[f.key])}</span>
-        <button onclick="adjustBodyMetric('${f.key}', 1)">+</button>`;
-    if (f.coarseStep) {
-      html += `<button onclick="adjustBodyMetric('${f.key}', 2)">++</button>`;
-    }
-    html += `</div></div>`;
+    html += stepperRowHTML(f.label, `bm-val-${f.key}`, fmtBodyMetric(f, state.values[f.key]), {
+      minusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', -2)`, label: '\u2212\u2212' } : null,
+      minus: { onclick: `adjustBodyMetric('${f.key}', -1)`, label: '\u2212' },
+      plus: { onclick: `adjustBodyMetric('${f.key}', 1)`, label: '+' },
+      plusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', 2)`, label: '++' } : null,
+    });
   });
   html += `</div>
     <div class="card">
       <a class="note-link" onclick="toggleBMNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
-    <button class="btn" onclick="showReview()">Review &amp; Share</button>
+    <button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
   app.innerHTML = html;
@@ -1029,57 +1057,39 @@ function persistBodyMetrics() {
 }
 
 function buildBodyMetricsPayload() {
-  const rec = { schema_version: "1.4", date: state.date, day_type: "body_metrics" };
+  const rec = { schema_version: "1.5", date: state.date, day_type: "body_metrics" };
   BODY_METRICS_FIELDS.forEach(f => { rec[f.key] = state.values[f.key]; });
   rec.notes = state.notes || "";
   return rec;
 }
 
-/* ============================== REVIEW / SHARE ============================== */
+/* ============================== SHARE ============================== */
+/* Previously routed through an intermediate Review screen (JSON preview, then a second
+   tap to actually share). Removed 2026-07 at Mark's request, once field format had been
+   trusted through live use: Share now fires directly from the entry screen. */
 
 function currentPayloadAndName() {
   switch (state.screen) {
     case 'strength': return [buildStrengthPayload(), `workout_strength_day${state.day}_${state.date}`];
-    case 'cycling': return [buildCyclingPayload(), `workout_cycling_day${state.day}_${state.date}`];
+    case 'cycling': return [buildCyclingPayload(), `workout_cycling_${state.day === 'Extra' ? 'extra' : 'day' + state.day}_${state.date}`];
     case 'yoga': return [buildYogaPayload(), `workout_yoga_${state.date}`];
     case 'achilles': return [buildAchillesPayload(), `workout_achilles_check_${state.date}`];
     case 'rom': return [buildRomPayload(), `workout_rom_check_${state.date}`];
     case 'bodymetrics': return [buildBodyMetricsPayload(), `workout_body_metrics_${state.date}`];
   }
 }
-function backToEntry() {
-  switch (state._returnScreen) {
-    case 'strength': renderStrength(); break;
-    case 'cycling': renderCycling(); break;
-    case 'yoga': renderYoga(); break;
-    case 'achilles': renderAchilles(); break;
-    case 'rom': renderRom(); break;
-    case 'bodymetrics': renderBodyMetrics(); break;
-  }
-  window.scrollTo(0, 0);
-}
-function showReview() {
-  state._returnScreen = state.screen;
+function shareNow() {
+  if (state.screen === 'strength') persistStrengthBaselines();
+  if (state.screen === 'bodymetrics') persistBodyMetrics();
   const [payload, filenameBase] = currentPayloadAndName();
-  app.innerHTML = `<a class="backlink" onclick="backToEntry()">&larr; Back to edit</a>
-    <h1>Review</h1>
-    <div class="card"><pre class="json-preview">${JSON.stringify(payload, null, 2)}</pre></div>
-    <button class="btn" onclick="doShare('${filenameBase}')">Share via Mail</button>
-    <button class="btn secondary" onclick="backToEntry()">Back to Edit</button>
-    <button class="btn" onclick="goHome()">Home</button>
-    <div id="status"></div>`;
-  window.scrollTo(0, 0);
-}
-function doShare(filenameBase) {
-  if (state._returnScreen === 'strength') persistStrengthBaselines();
-  if (state._returnScreen === 'bodymetrics') persistBodyMetrics();
-  const [payload] = currentPayloadAndName();
   shareJSON(payload, filenameBase, 'status');
 }
 
 /* ============================== WAKE LOCK (persistent screen) ============================== */
 /* Requires iOS 18.4+ when launched from the Home Screen (WebKit bug 254545) — works from a
-   plain Safari tab since iOS 16.4, but silently no-ops on standalone launches before 18.4. */
+   plain Safari tab since iOS 16.4, but silently no-ops on standalone launches before 18.4.
+   Fixed in Safari 18.4 (March 2025) and confirmed still working through iOS 26.1 as of this
+   writing, so a modern iOS version alone should not be the blocker (see SPEC.md §5.6). */
 
 let wakeLockSentinel = null;
 
@@ -1087,9 +1097,19 @@ async function requestWakeLock() {
   if (!('wakeLock' in navigator)) return;
   try {
     wakeLockSentinel = await navigator.wakeLock.request('screen');
-    wakeLockSentinel.addEventListener('release', () => { wakeLockSentinel = null; });
+    // The system can release the lock for reasons other than the page going hidden
+    // (e.g. power-save mode engaging, or an OS-level decision) while the page stays
+    // visible the whole time. Previously only the visibilitychange listener below
+    // attempted reacquisition, so a mid-session release with no visibility change
+    // left the screen unprotected until the next background/foreground cycle.
+    // Re-request immediately on release too, whenever the page is still visible.
+    wakeLockSentinel.addEventListener('release', () => {
+      wakeLockSentinel = null;
+      if (document.visibilityState === 'visible') requestWakeLock();
+    });
   } catch (err) {
-    // Expect NotAllowedError on unsupported combinations (e.g. pre-18.4 standalone launch); no-op.
+    // Expect NotAllowedError on unsupported combinations (e.g. pre-18.4 standalone launch,
+    // or Low Power Mode, which the spec explicitly allows as a rejection reason); no-op.
   }
 }
 
@@ -1135,12 +1155,11 @@ function clockFaceSVG() {
     </svg>`;
 }
 
-function openTimer(label) {
+function openTimer() {
   const overlay = document.createElement('div');
   overlay.id = 'timer-overlay';
   overlay.className = 'timer-overlay';
   overlay.innerHTML = `<div class="timer-card">
-      <div class="timer-label">${label}</div>
       ${clockFaceSVG()}
       <div class="timer-elapsed" id="timer-elapsed">0:00</div>
       <button class="btn" onclick="restartTimer()">Restart</button>
@@ -1148,6 +1167,10 @@ function openTimer(label) {
     </div>`;
   document.body.appendChild(overlay);
   startTimerAfterDelay();
+}
+
+function timerBarHTML() {
+  return `<div class="timer-fab-bar"><button class="btn" onclick="openTimer()">\u23f1 Start Timer</button></div>`;
 }
 
 function startTimerAfterDelay() {
