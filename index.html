@@ -499,8 +499,14 @@ function renderSettings() {
       <input type="file" accept="application/json" id="import-file" style="display:none" onchange="handleImportFile(this)">
       <button class="btn secondary" onclick="document.getElementById('import-file').click()">Choose File to Import</button>
     </div>
+    <div class="card">
+      <div class="card-title">Screen Wake Lock</div>
+      <p style="font-size:14px;margin:4px 0 10px;" id="wakelock-status">Checking\u2026</p>
+      <button class="btn secondary" onclick="requestWakeLock()">Retry Now</button>
+    </div>
     <div id="settings-status"></div>
     <button class="btn" onclick="goHome()">Home</button>`;
+  updateWakeLockStatusUI();
 }
 
 /* ============================== STRETCH CHECKLIST (shared) ============================== */
@@ -596,6 +602,14 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
   };
 }
 
+function checklistItemHTML(label) {
+  const on = state.checklist[label];
+  return `<div class="toggle-row" style="margin-bottom:8px;">
+      <span style="font-size:14px;">${label}</span>
+      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done \u2713':'Not done'}</button>
+    </div>`;
+}
+
 function renderStrength() {
   const dayNum = state.day;
   const exList = STRENGTH_DAYS[dayNum];
@@ -605,15 +619,7 @@ function renderStrength() {
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
-    <div class="card">`;
-  Object.keys(state.checklist).forEach(label => {
-    const on = state.checklist[label];
-    html += `<div class="toggle-row" style="margin-bottom:8px;">
-      <span style="font-size:14px;">${label}</span>
-      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done \u2713':'Not done'}</button>
-    </div>`;
-  });
-  html += `</div>`;
+    <div class="card">${checklistItemHTML("Warm-up (5-min light cardio + dynamic prep)")}</div>`;
 
   state.entries.forEach((entry, i) => {
     html += `<div class="card" id="ex-card-${i}">`;
@@ -633,6 +639,7 @@ function renderStrength() {
     html += `</div>`;
   });
 
+  html += `<div class="card">${checklistItemHTML("Balance (single-leg stance, rest intervals)")}</div>`;
   html += renderStretchChecklist(state.stretches, 'strength');
   html += `<button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
@@ -1086,36 +1093,73 @@ function shareNow() {
 }
 
 /* ============================== WAKE LOCK (persistent screen) ============================== */
-/* Requires iOS 18.4+ when launched from the Home Screen (WebKit bug 254545) — works from a
-   plain Safari tab since iOS 16.4, but silently no-ops on standalone launches before 18.4.
-   Fixed in Safari 18.4 (March 2025) and confirmed still working through iOS 26.1 as of this
-   writing, so a modern iOS version alone should not be the blocker (see SPEC.md §5.6). */
+/* Root cause found 2026-07: Safari requires the wake lock request to be made as a direct
+   result of a user gesture ("transient activation") — confirmed against the W3C spec
+   discussion (w3c/screen-wake-lock#350) and current implementation-guide sources, not just
+   inferred. Chrome does not have this requirement, which is why the original page-load-only
+   request (no gesture involved) could work in some environments but not in Safari — matching
+   exactly what was reported: screen still dimming/locking on the OS's normal timer, meaning
+   the lock was never actually held, not that it was held and then lost.
+
+   Also requires iOS 18.4+ when launched from the Home Screen (WebKit bug 254545) for the API
+   to function at all — fixed in Safari 18.4 (March 2025). I could not pull the bug thread's
+   later comments to confirm current status beyond that fix landing; Mark's device (iOS
+   26.5.2) is well past it either way, so this is very unlikely to be the remaining blocker
+   (see SPEC.md §5.6) — the missing-gesture issue above is.
+
+   Fix: request (or re-request, if not currently held) on every tap in the app, not just once
+   at page load. Since this is a tap-heavy workout-logging UI, the very first tap anywhere
+   establishes the lock, and if it's ever lost mid-session, the next tap re-establishes it —
+   turning Safari's gesture requirement into a non-issue rather than something the person has
+   to think about. */
 
 let wakeLockSentinel = null;
+let wakeLockStatus = 'unknown'; // 'active' | 'unsupported' | 'denied' | 'unknown' -- drives the Settings-screen readout
 
 async function requestWakeLock() {
-  if (!('wakeLock' in navigator)) return;
+  if (!('wakeLock' in navigator)) { wakeLockStatus = 'unsupported'; updateWakeLockStatusUI(); return; }
   try {
     wakeLockSentinel = await navigator.wakeLock.request('screen');
+    wakeLockStatus = 'active';
+    updateWakeLockStatusUI();
     // The system can release the lock for reasons other than the page going hidden
     // (e.g. power-save mode engaging, or an OS-level decision) while the page stays
-    // visible the whole time. Previously only the visibilitychange listener below
-    // attempted reacquisition, so a mid-session release with no visibility change
-    // left the screen unprotected until the next background/foreground cycle.
-    // Re-request immediately on release too, whenever the page is still visible.
+    // visible the whole time. Re-request immediately on release too, whenever the page
+    // is still visible -- the next ensureWakeLock() tap-listener call also catches this,
+    // but this handles it even if the person hasn't tapped anything yet.
     wakeLockSentinel.addEventListener('release', () => {
       wakeLockSentinel = null;
+      wakeLockStatus = 'unknown';
+      updateWakeLockStatusUI();
       if (document.visibilityState === 'visible') requestWakeLock();
     });
   } catch (err) {
-    // Expect NotAllowedError on unsupported combinations (e.g. pre-18.4 standalone launch,
-    // or Low Power Mode, which the spec explicitly allows as a rejection reason); no-op.
+    // NotAllowedError covers both a missing user gesture and system-level denial (Low Power
+    // Mode, low battery) -- can't distinguish the two from the error alone, but the retry-on-
+    // next-tap behavior below resolves the gesture case regardless of which it was.
+    wakeLockStatus = 'denied';
+    updateWakeLockStatusUI();
   }
+}
+
+// Called on every tap in the app (see the document-level listener below). No-ops immediately
+// if a lock is already held, so this isn't repeatedly hammering the API on every interaction.
+function ensureWakeLock() {
+  if (!wakeLockSentinel) requestWakeLock();
+}
+
+function updateWakeLockStatusUI() {
+  const el = document.getElementById('wakelock-status');
+  if (!el) return; // Settings screen isn't necessarily mounted right now -- fine, state is tracked regardless
+  const text = { active: '\u2713 Screen will stay on', unsupported: 'Not supported on this browser',
+    denied: '\u26a0\ufe0f Screen may sleep \u2014 tap anywhere to retry', unknown: 'Checking\u2026' }[wakeLockStatus];
+  el.textContent = text;
 }
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && !wakeLockSentinel) requestWakeLock();
 });
+document.addEventListener('click', ensureWakeLock, { capture: true });
 
 /* ============================== TIMER (analog sweep) ============================== */
 
