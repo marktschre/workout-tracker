@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<title>Workout Collector</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 520px; margin: 0 auto;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(96px + env(safe-area-inset-bottom, 0px));
+    background: #f2f2f7; color: #1d1d1f;
+  }
+  h1 { font-size: 22px; margin: 8px 0 2px; }
+  .sub { color: #6e6e73; font-size: 13px; margin-top: 0; }
+  .card {
+    background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .btn {
+    display: block; width: 100%; padding: 16px; font-size: 17px; font-weight: 600;
+    border: none; border-radius: 12px; background: #0071e3; color: white; margin-top: 10px;
+  }
+  .btn:active { background: #005bb5; }
+  .btn.secondary { background: #e5e5ea; color: #1d1d1f; }
+  .btn.secondary:active { background: #d1d1d6; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .home-section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #8e8e93; margin: 18px 4px 6px; }
+  .ex-name { font-weight: 600; font-size: 16px; color: #0071e3; }
+  .ex-target { color: #8e8e93; font-size: 13px; margin-bottom: 8px; }
+  .detail-block {
+    background: #f5f5f7; border-radius: 8px; padding: 10px 12px; margin: 6px 0 10px;
+    font-size: 13px; color: #3a3a3c; line-height: 1.4;
+  }
+  .detail-block a { color: #0071e3; font-weight: 600; display: inline-block; margin-top: 6px; }
+  .stepper-row { display: grid; grid-template-columns: 112px 1fr; align-items: center; margin: 8px 0; column-gap: 8px; }
+  .stepper-row .label { font-size: 14px; color: #48484a; }
+  .stepper {
+    display: grid; grid-template-columns: 34px 34px 68px 34px 34px; column-gap: 8px;
+    align-items: center; justify-items: center; justify-self: end;
+  }
+  .stepper .ph { width: 34px; height: 34px; }
+  .stepper button {
+    width: 34px; height: 34px; border-radius: 9px; border: none; background: #e5e5ea;
+    font-size: 18px; font-weight: 600; color: #1d1d1f; line-height: 1;
+  }
+  .stepper button:active { background: #d1d1d6; }
+  .stepper .val { min-width: 68px; text-align: center; font-size: 15px; font-weight: 600; }
+  .setgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .setgrid-row2 { display: flex; justify-content: center; gap: 6px; margin: 0 0 8px; }
+  .setgrid-row2 .setcell { flex: 0 0 calc((100% - 12px) / 3); }
+  .setcell { text-align: center; }
+  .setcell .setlabel { font-size: 11px; color: #8e8e93; margin-bottom: 3px; }
+  .setcell .mini { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .setcell .mini button {
+    width: 26px; height: 26px; border-radius: 7px; border: none; background: #e5e5ea;
+    font-size: 15px; font-weight: 600; line-height: 1;
+  }
+  .setcell .mini .v { min-width: 30px; text-align: center; font-size: 13px; font-weight: 600; }
+  .bandgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 8px 0; }
+  .bandtier { background: #f5f5f7; border-radius: 10px; padding: 6px; text-align: center; }
+  .bandtier .tlabel { font-size: 12px; color: #6e6e73; margin-bottom: 4px; font-weight: 600; }
+  .bandtier .mini { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .bandtier .mini button {
+    width: 28px; height: 28px; border-radius: 7px; border: none; background: #e5e5ea;
+    font-size: 15px; font-weight: 700;
+  }
+  .bandtier .mini .v { min-width: 20px; text-align: center; font-size: 14px; font-weight: 700; }
+  .band-total { font-size: 14px; font-weight: 600; margin-top: 4px; color: #1d1d1f; }
+  .variant-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .variant-btn {
+    flex: 1; padding: 10px 6px; border-radius: 10px; border: 1.5px solid #d1d1d6;
+    background: white; font-size: 13px; font-weight: 600; color: #1d1d1f;
+  }
+  .variant-btn.selected { background: #0071e3; border-color: #0071e3; color: white; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .toggle-btn {
+    padding: 8px 16px; border-radius: 20px; border: 1.5px solid #d1d1d6; background: white;
+    font-size: 14px; font-weight: 600; color: #1d1d1f; flex-shrink: 0; margin-left: 10px;
+  }
+  .toggle-btn.on { background: #34c759; border-color: #34c759; color: white; }
+  .check-item { border-bottom: 1px solid #f0f0f2; padding: 10px 0; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item .name { font-size: 14px; font-weight: 600; color: #0071e3; }
+  .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px;
+    font-weight: 600; background: #e5e5ea; color: #48484a; margin-top: 4px;
+  }
+  .badge.top { background: #34c759; color: white; }
+  .note-link { font-size: 13px; color: #0071e3; margin-top: 4px; display: inline-block; }
+  input.note-field {
+    width: 100%; margin-top: 6px; padding: 8px; border-radius: 8px; border: 1px solid #d1d1d6;
+    font-size: 14px; font-family: inherit;
+  }
+  hr.sep { border: none; border-top: 1px solid #e5e5ea; margin: 12px 0; }
+  input[type="date"] {
+    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d1d1d6;
+    font-size: 16px; margin-top: 4px; background: white;
+  }
+  pre.json-preview {
+    background: #1d1d1f; color: #7fd97f; font-size: 11px; padding: 10px; border-radius: 10px;
+    overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin-top: 12px;
+  }
+  #status, #settings-status {
+    margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 13px; line-height: 1.4;
+    background: white; border: 1px solid #d2d2d7; display: none;
+  }
+  #status.show, #settings-status.show { display: block; }
+  #status.ok, #settings-status.ok { border-color: #34c759; background: #eafff0; }
+  #status.err, #settings-status.err { border-color: #ff3b30; background: #fff0ef; }
+  .backlink { font-size: 14px; color: #0071e3; margin-bottom: 10px; display: inline-block; }
+  .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: #8e8e93; margin-bottom: 6px; }
+  .timer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timer-card {
+    background: white; border-radius: 20px; padding: 24px; text-align: center;
+    width: 260px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .timer-elapsed { font-size: 22px; font-weight: 700; margin: 14px 0; font-variant-numeric: tabular-nums; }
+  .btn.secondary.small { font-size: 14px; }
+  .timer-fab-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+    background: rgba(242,242,247,0.92); backdrop-filter: blur(8px);
+    border-top: 1px solid #d1d1d6;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .timer-fab-bar .btn { max-width: 520px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================== REFERENCE DATA ============================== */
+
+const EXERCISE_DETAILS = {
+  "Goblet Squat": { note:"Depth limited by heel-rise; quad/anterior chain.", ref:"https://exrx.net/WeightExercises/Kettlebell/KBGobletSquat" },
+  "DB Step-Up": { note:"Lead-heel drive only \u2014 no rear push-off (Achilles).", ref:"https://exrx.net/WeightExercises/Quadriceps/DBStepUp" },
+  "Pull-Up": { note:"Vertical pull; negative is key strength driver.", ref:"https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup" },
+  "Weighted Sit-Up": { note:"No momentum.", ref:"https://exrx.net/WeightExercises/RectusAbdominis/WtSitUp" },
+  "Side Plank": { note:"Isometric hold; keep hips lifted, body in a straight line.", ref:"https://exrx.net/WeightExercises/Obliques/BWSidePlank" },
+  "Seated Band Row": { note:"Neutral spine, no hinge; brace core, watch pelvic tuck late in set.", ref:"https://exrx.net/WeightExercises/BackGeneral/CBSeatedRow" },
+  "DB Bent-Over Row": { note:"Horizontal pull; full extension each rep, bench optional.", ref:"https://exrx.net/WeightExercises/BackGeneral/DBBentOverRow" },
+  "Ring Dip": { note:"Vertical push; rings rotate naturally; scale with feet supported.", ref:"https://gmb.io/gymnastic-rings-risks-benefits/" },
+  "Push-Up": { note:"Horizontal push; elbows 45\u00b0, full lockout.", ref:"https://exrx.net/WeightExercises/PectoralSternal/BWPushup" },
+  "DB Overhead Press": { note:"Core braced \u2014 no back hyperextension, seated or standing.", ref:"https://weighttraining.guide/exercises/seated-dumbbell-overhead-press/" },
+  "Band Face Pull": { note:"Precision movement, not loaded; shoulder health.", ref:"https://musclewiki.com/exercise/band-face-pull" },
+  "DB Curl": { note:"Full extension at bottom, peak contraction at top; no swing.", ref:"https://exrx.net/WeightExercises/Biceps/DBCurl" },
+  "DB Romanian Dead Lift": { note:"Hinge to mid-shin only (flexibility limit); posterior chain.", ref:"https://exrx.net/WeightExercises/OlympicLifts/RomanianDeadlift" },
+  "Reverse Lunge": { note:"Shallow rear-knee drop; front shin vertical; low Achilles dorsiflexion.", ref:"https://exrx.net/WeightExercises/Quadriceps/DBRearLunge" },
+  "Bird Dog": { note:"Anti-extension/rotation; opposite arm-leg reach, neutral spine, no twist.", ref:"https://exrx.net/WeightExercises/ErectorSpinae/BWBirdDog" },
+  "Ring Row": { note:"Scalable via foot position (more horizontal = harder).", ref:"https://gmb.io/rings/" },
+  "Pallof Press": { note:"Anti-rotation; press straight out from chest, resist the band's pull to the side.", ref:"https://weighttraining.guide/exercises/cable-horizontal-pallof-press/" },
+};
+
+const STRETCH_DETAILS = {
+  "Standing Quads Stretch": { dur:"2\u00d720-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
+  "Lying Glute Stretch": { dur:"2\u00d720-30s", note:"Glute / piriformis.", ref:"https://exrx.net/Stretches/GluteusMaximus/Lying" },
+  "Seated Groin Stretch": { dur:"2\u00d720-30s", note:"Adductors. Soles together, pull heels toward groin, press knees toward floor with elbows \u2014 don't force.", ref:"https://exrx.net/Stretches/HipAdductors/SeatedGroinFloor" },
+  "Standing Hamstring Stretch (forward fold)": { dur:"2\u00d720-30s", note:"Hamstring. Hand-supported on thighs/shins as the fold develops \u2014 do not hang unsupported.", ref:"https://exrx.net/Stretches/Hamstrings/Standing" },
+  "Doorway Hamstring & Hip Flexor Stretch": { dur:"2\u00d730-60s", note:"Hamstring (raised leg) + hip flexor (extended leg) together. Lift the raised leg only until the lower back flattens to the floor. Shoes off.", ref:"https://www.columbiadoctors.org/health-library/multimedia/hamstring-stretch-doorway/" },
+  "Wall Straight Leg Calf Stretch": { dur:"2\u00d720-30s", note:"Gastrocnemius. Rear knee straight, heel down.", ref:"https://exrx.net/Stretches/Gastrocnemius/Wall" },
+  "Wall Bent Knee Calf Stretch": { dur:"2\u00d720-30s", note:"Soleus. Rear knee bent \u2014 isolates soleus from gastrocnemius.", ref:"https://exrx.net/Stretches/Soleus/Wall" },
+  "Kneeling Hip Flexor Stretch": { dur:"2\u00d720-30s", note:"Hip flexor (iliopsoas). Torso upright, push hips forward \u2014 don't lean forward from the torso.", ref:"https://exrx.net/Stretches/HipFlexors/KneelingHipFlexor" },
+  "Seated Cross Twist (IT Band)": { dur:"2\u00d715-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.mayoclinic.org/healthy-lifestyle/stress-management/multimedia/seated-spinal-twist/vid-20453586" },
+  "Doorway Chest Stretch": { dur:"2\u00d720-30s", note:"Chest (pectoralis). Elbow at shoulder height for balanced upper/lower chest stretch.", ref:"https://exrx.net/Stretches/ChestGeneral/Doorway" },
+  "Rear Deltoid Stretch (cross-body)": { dur:"2\u00d720-30s", note:"Rear deltoid / posterior shoulder. Arm across chest, opposite hand on elbow.", ref:"https://exrx.net/Stretches/DeltoidPosterior/RearDelt" },
+  "Overhead Triceps Stretch": { dur:"2\u00d720-30s", note:"Triceps. Forearm behind head, opposite hand pulls elbow gently.", ref:"https://exrx.net/Stretches/Triceps/Overhead" },
+  "Overhead Lat Stretch": { dur:"2\u00d720-30s", note:"Lat. Pull elbow toward head/back, lean torso away \u2014 avoid overstressing the neck.", ref:"https://exrx.net/Stretches/LatissimusDorsi/Overhead" },
+  "Child's Pose (modified, wide-knee)": { dur:"1-2 min", note:"Lower back, passive stretch. Knees wide, big toes together \u2014 wide-knee reduces hip-flexion demand.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
+};
+
+const STRETCH_LISTS = {
+  "1": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Quads Stretch","Standing Hamstring Stretch (forward fold)","Seated Groin Stretch","Lying Glute Stretch","Doorway Hamstring & Hip Flexor Stretch"],
+  "3": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
+  "4": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Hamstring Stretch (forward fold)","Lying Glute Stretch","Child's Pose (modified, wide-knee)","Doorway Hamstring & Hip Flexor Stretch"],
+  "6": ["Doorway Chest Stretch","Rear Deltoid Stretch (cross-body)","Overhead Triceps Stretch","Overhead Lat Stretch"],
+  "cycling": ["Wall Straight Leg Calf Stretch","Wall Bent Knee Calf Stretch","Standing Quads Stretch","Standing Hamstring Stretch (forward fold)","Kneeling Hip Flexor Stretch","Seated Cross Twist (IT Band)"],
+};
+
+const YOGA_POSES = [
+  { pose:"Centering (seated breath)", dur:"3-5 min", note:"Cross-legged or in a chair, eyes closed, slow breath. Nervous-system settling \u2014 sets the pace for the session.", ref:null },
+  { pose:"Cat-Cow", dur:"5 min (~8-10 rounds)", note:"Hands and knees, alternate arching (Cow) and rounding (Cat) with the breath. Non-weight-bearing \u2014 no Achilles or hip-depth concern.", ref:"https://en.wikipedia.org/wiki/Cat/Cow_pose" },
+  { pose:"Sphinx Pose", dur:"2\u00d760-90s", note:"Prone, forearms down, chest lifted. Gentlest backbend \u2014 zero ankle involvement.", ref:"https://www.yogajournal.com/poses/sphinx-pose/" },
+  { pose:"Reclining Bound Angle", dur:"2-3 min", note:"On the back, knees open to the sides, soles together. Purely passive hip opener \u2014 prop under each knee if needed.", ref:"https://www.yogajournal.com/poses/reclining-bound-angle-pose/" },
+  { pose:"Supine Spinal Twist", dur:"60-90s per side", note:"On the back, knees bent, drop both knees to one side, shoulders grounded. Safest twist for the back history.", ref:"https://www.yogabasics.com/asana/knee-down-twist/" },
+  { pose:"Child's Pose (wide-knee)", dur:"2-3 min", note:"Knees wide, big toes touching, hips sinking toward heels. Wide-knee, not narrow.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
+  { pose:"Legs-Up-the-Wall", dur:"5-8 min", note:"Legs resting up a wall, hips close to it. Closest thing to true rest in the sequence.", ref:"https://www.yogajournal.com/poses/legs-up-the-wall-pose-2/" },
+  { pose:"Savasana", dur:"5-8 min", note:"Flat on the back, arms and legs relaxed, eyes closed. Close the session here regardless of time remaining.", ref:null },
+];
+
+const BAND_TIERS = [10,20,30,40,50];
+const BAND_MAX_PER_TIER = 4;
+
+const BODY_METRICS_FIELDS = [
+  { key:"weight_lbs",   label:"Weight",       unit:"lbs",  min:0, max:500,  fineStep:1,   coarseStep:null, default:150 },
+  { key:"bmi",          label:"BMI",          unit:"",     min:0, max:99.9, fineStep:0.1, coarseStep:1,    default:25 },
+  { key:"body_fat_pct", label:"% Body Fat",   unit:"%",    min:0, max:99.9, fineStep:0.1, coarseStep:1,    default:20 },
+  { key:"muscle_pct",   label:"% Muscle",     unit:"%",    min:0, max:99.9, fineStep:0.1, coarseStep:1,    default:35 },
+  { key:"rm_cal",       label:"RM Cal",       unit:"kcal", min:0, max:5000, fineStep:1,   coarseStep:10,   default:1600 },
+  { key:"body_age",     label:"Body Age",     unit:"yrs",  min:0, max:99,  fineStep:1,   coarseStep:null, default:40 },
+  { key:"visceral_fat", label:"Visceral Fat", unit:"",     min:0, max:99,  fineStep:1,   coarseStep:null, default:10 },
+];
+
+/* ============================== STRENGTH EXERCISE CONFIG ============================== */
+
+const STRENGTH_DAYS = {
+  1: [
+    { item:"Goblet Squat", target:"10-12", repDefault:10, repTop:12, unit:"reps",
+      tempo:"3 sec down, pause, 1-2 sec up",
+      weight:{type:"simple",min:0,max:60,step:5,default:30,unit:"lbs",bwLabel:"BW"} },
+    { item:"DB Step-Up", target:"10", repDefault:10, repTop:10, unit:"reps/leg",
+      tempo:"2-3 sec down", heights:[12,14,16], heightDefault:14,
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Pull-Up", target:"6-12", repDefault:6, repTop:12, unit:"reps",
+      tempo:"3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+    { item:"Weighted Sit-Up", target:"15-25", repDefault:15, repTop:25, unit:"reps",
+      tempo:"2 sec up, 3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
+    { item:"Side Plank", target:"20-30", repDefault:20, repTop:30, unit:"sec/side", timed:true,
+      tempo:"Isometric hold",
+      weight:null },
+  ],
+  3: [
+    { item:"Row", target:"10-12", unit:"reps",
+      variants:["Seated Band Row","DB Bent-Over Row"],
+      variantOverrides: {
+        "Seated Band Row": { target:"10-12", repDefault:10, repTop:12,
+          tempo:"2-3 sec negative on return",
+          weight:{type:"bandmix"} },
+        "DB Bent-Over Row": { target:"10-12", repDefault:10, repTop:12,
+          tempo:"2-3 sec down",
+          weight:{type:"simple",min:0,max:60,step:5,default:30,unit:"lbs/hand",bwLabel:"BW"} },
+      } },
+    { item:"Dip", target:"8-12", unit:"reps",
+      variants:["Ring Dip","Push-Up"],
+      variantOverrides: {
+        "Ring Dip": { target:"8-12", repDefault:8, repTop:12, tempo:"3 sec down", weight:null },
+        "Push-Up": { target:"15-20", repDefault:15, repTop:20, tempo:"2-3 sec down", weight:null },
+      } },
+    { item:"DB Overhead Press", target:"10-12", repDefault:10, repTop:12, unit:"reps",
+      tempo:"2-3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:20,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Band Face Pull", target:"15-20", repDefault:15, repTop:20, unit:"reps",
+      tempo:"2-3 sec both directions", resistanceNote:"Lightest 1-2 bands",
+      weight:{type:"bandmix"} },
+    { item:"Pallof Press", target:"10-12", repDefault:10, repTop:12, unit:"reps/side",
+      tempo:"2 sec hold at full extension", resistanceNote:"Light-moderate band",
+      weight:{type:"bandmix"} },
+  ],
+  4: [
+    { item:"DB Romanian Dead Lift", target:"10-12", repDefault:10, repTop:12, unit:"reps",
+      tempo:"3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:30,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Reverse Lunge", target:"10", repDefault:10, repTop:10, unit:"reps/leg",
+      tempo:"2-3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Pull-Up", target:"6-12", repDefault:6, repTop:12, unit:"reps",
+      tempo:"3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
+    { item:"Weighted Sit-Up", target:"15-25", repDefault:15, repTop:25, unit:"reps",
+      tempo:"2 sec up, 3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs",bwLabel:"BW"} },
+    { item:"Bird Dog", target:"10-12", repDefault:10, repTop:12, unit:"reps/side",
+      tempo:"2-3 sec hold at top",
+      weight:null },
+  ],
+  6: [
+    { item:"Ring Row", target:"10-12", repDefault:10, repTop:12, unit:"reps",
+      tempo:"3 sec down",
+      weight:null },
+    { item:"Push-Up", target:"15-20", repDefault:15, repTop:20, unit:"reps",
+      tempo:"2-3 sec down",
+      weight:null },
+    { item:"DB Curl", target:"10-12", repDefault:10, repTop:12, unit:"reps",
+      tempo:"2-3 sec down",
+      weight:{type:"simple",min:0,max:60,step:5,default:15,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Bird Dog", target:"10-12", repDefault:10, repTop:12, unit:"reps/side",
+      tempo:"2-3 sec hold at top",
+      weight:null },
+  ],
+};
+
+/* ============================== HELPERS ============================== */
+
+function todayLocal() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function yymmdd() {
+  const d = new Date();
+  return `${String(d.getFullYear()).slice(2)}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+function lsGet(key, fallback) {
+  try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); }
+  catch (e) { return fallback; }
+}
+function lsSet(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+function fmtDuration(mins) {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
+
+function bandTotal(mix) {
+  return BAND_TIERS.reduce((sum, t) => sum + t * (mix[t] || 0), 0);
+}
+function bandBreakdown(mix) {
+  const parts = BAND_TIERS.filter(t => mix[t] > 0).map(t => `${mix[t]}\u00d7${t}`);
+  return parts.length ? parts.join('+') : 'none';
+}
+function fmtWeight(cfg, val) {
+  if (!cfg) return "BW";
+  if (cfg.type === "bandmix") {
+    const total = bandTotal(val);
+    return total === 0 ? "0 lbs" : `${total} lbs (${bandBreakdown(val)})`;
+  }
+  if (val === 0 && cfg.bwLabel) return cfg.bwLabel;
+  return `${val} ${cfg.unit}`;
+}
+function defaultBandMix() { const m = {}; BAND_TIERS.forEach(t => m[t] = 0); return m; }
+
+const app = document.getElementById('app');
+let state = { screen: 'home' };
+
+/* ============================== SHARE ============================== */
+
+async function shareJSON(payload, filenameBase, statusElId) {
+  const json = JSON.stringify(payload, null, 2);
+  const filename = `${filenameBase}.json`;
+  const file = new File([json], filename, { type: "application/json" });
+  const statusEl = document.getElementById(statusElId);
+  const show = (msg, cls) => { statusEl.textContent = msg; statusEl.className = 'show ' + (cls || ''); };
+  if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+    show("This device/browser can't share files. Open this page in Safari on the iPad.", "err");
+    return;
+  }
+  try {
+    await navigator.share({ files: [file], title: `Workout ${yymmdd()}` });
+    show(`Shared ${filename}. Confirm in Mail that the file is actually attached before sending.`, "ok");
+  } catch (err) {
+    if (err.name !== "AbortError") show("Share failed: " + err.message, "err");
+  }
+}
+
+/* ============================== SHARED: STEPPER ROW ============================== */
+/* Every ±stepper on every page renders through this one function so the "−", value, and
+   "+" always land in the same fixed grid columns regardless of label length or whether a
+   coarse ±± pair is present — a 2-button row and a 4-button row line up on the inner
+   −/value/+ columns instead of both being right-flush (which would misalign them). Missing
+   coarse buttons are replaced with an empty placeholder that reserves the same grid column,
+   rather than omitted, so the fine buttons don't shift. */
+function stepperRowHTML(label, valId, valText, opts) {
+  const mc = opts.minusCoarse
+    ? `<button onclick="${opts.minusCoarse.onclick}">${opts.minusCoarse.label}</button>` : `<span class="ph"></span>`;
+  const pc = opts.plusCoarse
+    ? `<button onclick="${opts.plusCoarse.onclick}">${opts.plusCoarse.label}</button>` : `<span class="ph"></span>`;
+  return `<div class="stepper-row"><span class="label">${label}</span>
+      <div class="stepper">
+        ${mc}
+        <button onclick="${opts.minus.onclick}">${opts.minus.label}</button>
+        <span class="val" id="${valId}">${valText}</span>
+        <button onclick="${opts.plus.onclick}">${opts.plus.label}</button>
+        ${pc}
+      </div>
+    </div>`;
+}
+
+/* ============================== SHARED: DETAIL DRILL-DOWN ============================== */
+
+function detailBlockHTML(id, note, ref, dur) {
+  return `<div class="detail-block" id="detail-${id}">
+    ${dur ? `<div style="margin-bottom:4px;color:#8e8e93;">${dur}</div>` : ''}
+    ${note}
+    ${ref ? `<a href="${ref}" target="_blank" rel="noopener">Reference &rarr;</a>` : ''}
+  </div>`;
+}
+function toggleDetail(id) {
+  const el = document.getElementById(`detail-${id}`);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+/* ============================== HOME ============================== */
+
+function renderHome() {
+  app.innerHTML = `
+    <h1>Workout Collector</h1>
+    <p class="sub">Tap a day to log it. Everything here is click/tap \u2014 no typing required except the rare optional note.</p>
+    <div class="home-section-label">Strength Days</div>
+    <div class="grid2">
+      <button class="btn" onclick="goStrength(1)">Day 1</button>
+      <button class="btn" onclick="goStrength(3)">Day 3</button>
+      <button class="btn" onclick="goStrength(4)">Day 4</button>
+      <button class="btn" onclick="goStrength(6)">Day 6</button>
+    </div>
+    <div class="home-section-label">Cardio Days</div>
+    <div class="grid3">
+      <button class="btn" onclick="goCycling(2)">Day 2</button>
+      <button class="btn" onclick="goCycling(5)">Day 5</button>
+      <button class="btn" onclick="goCycling('Extra')">Extra</button>
+    </div>
+    <div class="home-section-label">Other</div>
+    <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga</button>
+    <button class="btn secondary" onclick="goAchilles()">Weekly Achilles Check</button>
+    <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check</button>
+    <button class="btn secondary" onclick="goBodyMetrics()">Weight / Body Metrics</button>
+    <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
+  `;
+}
+function goHome() { state = { screen: 'home' }; renderHome(); window.scrollTo(0, 0); }
+
+/* ============================== SETTINGS: BACKUP / RESTORE ============================== */
+
+function gatherSettingsData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.indexOf('w_') === 0) data[key] = localStorage.getItem(key);
+  }
+  return data;
+}
+function applySettingsData(data) {
+  const keys = Object.keys(data);
+  keys.forEach(k => localStorage.setItem(k, data[k]));
+  return keys.length;
+}
+async function exportSettings() {
+  const data = gatherSettingsData();
+  const count = Object.keys(data).length;
+  const json = JSON.stringify(data, null, 2);
+  const filename = `workout_settings_${todayLocal()}.json`;
+  const file = new File([json], filename, { type: "application/json" });
+  const statusEl = document.getElementById('settings-status');
+  if (count === 0) {
+    statusEl.textContent = "Nothing to export yet \u2014 no exercise has been shared from this device.";
+    statusEl.className = 'show err';
+    return;
+  }
+  if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+    statusEl.textContent = "This browser can't share files. Open in Safari.";
+    statusEl.className = 'show err';
+    return;
+  }
+  try {
+    await navigator.share({ files: [file], title: "Workout Settings Backup" });
+    statusEl.textContent = `Shared ${filename} (${count} saved values). AirDrop is the fastest way to get it to your other device.`;
+    statusEl.className = 'show ok';
+  } catch (err) {
+    if (err.name !== "AbortError") { statusEl.textContent = "Export failed: " + err.message; statusEl.className = 'show err'; }
+  }
+}
+function handleImportFile(inputEl) {
+  const file = inputEl.files[0];
+  const statusEl = document.getElementById('settings-status');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const count = applySettingsData(data);
+      statusEl.textContent = `Restored ${count} saved values. New exercise screens will now start from these baselines.`;
+      statusEl.className = 'show ok';
+    } catch (err) {
+      statusEl.textContent = "That file didn't look like a settings backup: " + err.message;
+      statusEl.className = 'show err';
+    }
+  };
+  reader.readAsText(file);
+}
+function goSettings() { state = { screen: 'settings' }; renderSettings(); window.scrollTo(0, 0); }
+function renderSettings() {
+  const count = Object.keys(gatherSettingsData()).length;
+  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Backup / Restore</h1>
+    <p class="sub">Weight and band baselines are stored on this device only. Use this to carry them to another device.</p>
+    <div class="card">
+      <div class="card-title">This device</div>
+      <p style="font-size:14px;margin:4px 0 10px;">${count} saved value${count===1?'':'s'} on this device.</p>
+      <button class="btn" onclick="exportSettings()">Export (Share / AirDrop)</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Restore on this device</div>
+      <p style="font-size:14px;margin:4px 0 10px;">Pick a settings file exported from another device.</p>
+      <input type="file" accept="application/json" id="import-file" style="display:none" onchange="handleImportFile(this)">
+      <button class="btn secondary" onclick="document.getElementById('import-file').click()">Choose File to Import</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Screen Wake Lock</div>
+      <p style="font-size:14px;margin:4px 0 10px;" id="wakelock-status">Checking\u2026</p>
+      <button class="btn secondary" onclick="requestWakeLock()">Retry Now</button>
+    </div>
+    <div id="settings-status"></div>
+    <button class="btn" onclick="goHome()">Home</button>`;
+  updateWakeLockStatusUI();
+}
+
+/* ============================== STRETCH CHECKLIST (shared) ============================== */
+
+function makeStretchState(listKey) {
+  return STRETCH_LISTS[listKey].map(name => ({ item: name, done: false }));
+}
+function renderStretchChecklist(stretchArr, prefix) {
+  let html = `<div class="card"><div class="card-title">Stretches</div>`;
+  stretchArr.forEach((s, i) => {
+    const d = STRETCH_DETAILS[s.item];
+    html += `<div class="check-item">
+      <div class="toggle-row">
+        <span class="name" onclick="toggleDetail('${prefix}-str-${i}')">${s.item}</span>
+        <button class="toggle-btn ${s.done?'on':''}" onclick="toggleStretch('${prefix}',${i})">${s.done?'Done \u2713':'Not done'}</button>
+      </div>
+      <div style="display:none;" id="detail-${prefix}-str-${i}">
+        ${detailBlockHTML(`${prefix}-str-${i}`.replace('detail-',''), d.note, d.ref, d.dur)}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function toggleStretch(prefix, i) {
+  const arr = prefix === 'cyc' ? state.stretches : state.stretches;
+  arr[i].done = !arr[i].done;
+  rerenderCurrent();
+}
+function rerenderCurrent() {
+  if (state.screen === 'strength') renderStrength();
+  else if (state.screen === 'cycling') renderCycling();
+}
+
+/* ============================== STRENGTH DAY ============================== */
+
+function goStrength(dayNum) {
+  const exList = STRENGTH_DAYS[dayNum];
+  state = {
+    screen: 'strength',
+    day: dayNum,
+    date: todayLocal(),
+    checklist: { "Warm-up (5-min light cardio + dynamic prep)": false,
+                 "Balance (single-leg stance, rest intervals)": false },
+    stretches: makeStretchState(String(dayNum)),
+    entries: exList.map(cfg => buildEntryFromConfig(dayNum, cfg)),
+  };
+  renderStrength();
+  window.scrollTo(0, 0);
+}
+
+function buildEntryFromConfig(dayNum, cfg, variantName) {
+  const isVariant = !!cfg.variants;
+  const chosen = variantName || (isVariant ? cfg.variants[0] : null);
+  const active = isVariant ? cfg.variantOverrides[chosen] : cfg;
+  const wcfg = active.weight;
+  const baseKey = `w_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  const stored = lsGet(baseKey, null);
+  let weightVal;
+  if (!wcfg) weightVal = "BW";
+  else if (wcfg.type === "bandmix") weightVal = (stored && typeof stored === 'object') ? stored : defaultBandMix();
+  else weightVal = (typeof stored === 'number') ? stored : wcfg.default;
+
+  let heightVal = null;
+  if (cfg.heights) {
+    const hKey = `h_${dayNum}_${cfg.item}`;
+    const storedH = lsGet(hKey, null);
+    heightVal = cfg.heights.includes(storedH) ? storedH : cfg.heightDefault;
+  }
+
+  // Reps/Sets/Top-of-Range now persist across sessions the same way Weight/Step-Height
+  // already did (2026-07) -- previously every session started from hardcoded defaults with
+  // no way to see what was actually done last time. topOfRange is deliberately NOT trusted
+  // verbatim from storage unless it was a manual override: it's recomputed against the
+  // *current* repTop, so a later change to an exercise's target range (as happened to
+  // Weighted Sit-Up and Bird Dog in this same update) correctly re-evaluates old reps
+  // against the new target rather than carrying forward a stale Y/N.
+  const perfKey = `perf_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  const storedPerf = lsGet(perfKey, null);
+  const perfValid = storedPerf && typeof storedPerf === 'object'
+    && Array.isArray(storedPerf.reps) && storedPerf.reps.length === 5
+    && storedPerf.reps.every(n => typeof n === 'number')
+    && typeof storedPerf.activeSets === 'number' && storedPerf.activeSets >= 0 && storedPerf.activeSets <= 5;
+  const repsVal = perfValid ? storedPerf.reps.slice() : [active.repDefault, active.repDefault, active.repDefault, active.repDefault, active.repDefault];
+  const activeSetsVal = perfValid ? storedPerf.activeSets : 3;
+  const topOverriddenVal = perfValid ? !!storedPerf.topOverridden : false;
+
+  const entry = {
+    item: isVariant ? chosen : cfg.item,
+    variantBase: cfg.item,
+    variants: cfg.variants || null,
+    variantOverrideTarget: isVariant ? (active.target || '') : undefined,
+    target: isVariant ? undefined : cfg.target,
+    unit: active.unit || cfg.unit,
+    tempo: active.tempo,
+    resistanceNote: active.resistanceNote,
+    timed: !!cfg.timed,
+    heights: cfg.heights || null,
+    height: heightVal,
+    weightCfg: wcfg,
+    weight: weightVal,
+    reps: repsVal,
+    activeSets: activeSetsVal,
+    repTop: active.repTop,
+    topOverridden: topOverriddenVal,
+    notes: "",
+    noteOpen: false,
+    detailOpen: false,
+  };
+  entry.topOfRange = topOverriddenVal ? (perfValid ? storedPerf.topOfRange : "N") : recomputeTopOfRange(entry);
+  return entry;
+}
+
+function checklistItemHTML(label) {
+  const on = state.checklist[label];
+  return `<div class="toggle-row" style="margin-bottom:8px;">
+      <span style="font-size:14px;">${label}</span>
+      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done \u2713':'Not done'}</button>
+    </div>`;
+}
+
+function renderStrength() {
+  const dayNum = state.day;
+  const exList = STRENGTH_DAYS[dayNum];
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Day ${dayNum}</h1>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>
+    <div class="card">${checklistItemHTML("Warm-up (5-min light cardio + dynamic prep)")}</div>`;
+
+  state.entries.forEach((entry, i) => {
+    html += `<div class="card" id="ex-card-${i}">`;
+    if (entry.variants) {
+      html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.variantBase}</div>
+        <div class="variant-row">
+          ${entry.variants.map(v => `<button class="variant-btn ${entry.item===v?'selected':''}" onclick="selectVariant(${i},'${v.replace(/'/g,"\\'")}')">${v}</button>`).join('')}
+        </div>
+        <div class="ex-target">Target: ${entry.variantOverrideTarget || ''} ${entry.unit || ''}</div>`;
+    } else {
+      html += `<div class="ex-name" onclick="toggleDetail('ex-${i}')">${entry.item}</div>
+        <div class="ex-target">Target: ${entry.target} ${entry.unit}${entry.resistanceNote ? ` (${entry.resistanceNote})` : ''}</div>`;
+    }
+    const d = EXERCISE_DETAILS[entry.item];
+    html += `<div style="display:none;" id="detail-ex-${i}">${d ? detailBlockHTML(`ex-${i}`,d.note,d.ref) : ''}</div>`;
+    html += renderExerciseControls(entry, i);
+    html += `</div>`;
+  });
+
+  html += `<div class="card">${checklistItemHTML("Balance (single-leg stance, rest intervals)")}</div>`;
+  html += renderStretchChecklist(state.stretches, 'strength');
+  html += `<button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+  html += timerBarHTML();
+  app.innerHTML = html;
+}
+
+function renderExerciseControls(entry, i) {
+  let html = '';
+  if (entry.weightCfg && entry.weightCfg.type === "bandmix") {
+    html += `<div class="stepper-row" style="align-items:flex-start;"><span class="label">Weight</span></div>
+      <div class="bandgrid">
+        ${BAND_TIERS.map(t => `<div class="bandtier">
+          <div class="tlabel">${t}#</div>
+          <div class="mini">
+            <button onclick="adjustBand(${i}, ${t}, -1)">\u2212</button>
+            <span class="v" id="band-${i}-${t}">${entry.weight[t]}</span>
+            <button onclick="adjustBand(${i}, ${t}, 1)">+</button>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div class="band-total" id="band-total-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</div>`;
+  } else if (entry.weightCfg) {
+    html += stepperRowHTML(`Weight${entry.weightCfg.labelSuffix || ''}`, `w-val-${i}`, fmtWeight(entry.weightCfg, entry.weight), {
+      minus: { onclick: `adjustWeight(${i}, -${entry.weightCfg.step})`, label: '\u2212' },
+      plus: { onclick: `adjustWeight(${i}, ${entry.weightCfg.step})`, label: '+' },
+    });
+  } else {
+    html += `<div class="stepper-row"><span class="label">Weight</span><span class="val" style="justify-self:end;">BW</span></div>`;
+  }
+
+  if (entry.heights) {
+    html += `<div class="stepper-row">
+      <span class="label">Step Height</span>
+      <div class="variant-row" style="flex:1;margin-bottom:0;">
+        ${entry.heights.map(h => `<button class="variant-btn ${entry.height===h?'selected':''}" onclick="setHeight(${i},${h})">${h}"</button>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  html += stepperRowHTML('Sets', `sets-val-${i}`, entry.activeSets, {
+      minus: { onclick: `adjustSets(${i}, -1)`, label: '\u2212' },
+      plus: { onclick: `adjustSets(${i}, 1)`, label: '+' },
+    });
+  html += `<div id="setgrid-${i}">${renderSetCells(entry, i)}</div>
+    <div style="font-size:12px;color:#8e8e93;margin-top:-4px;">Tempo: ${entry.tempo || '—'}</div>
+    <div>
+      <span class="badge ${entry.topOfRange==='Y'?'top':''}" id="top-badge-${i}" onclick="toggleTopOverride(${i})">
+        Top of Range: ${entry.topOfRange}
+      </span>
+    </div>
+    <div>
+      <a class="note-link" onclick="toggleNote(${i})">${entry.noteOpen?'Hide note':'+ note (pain, form, etc.)'}</a>
+      ${entry.noteOpen ? `<input class="note-field" id="note-${i}" type="text" value="${entry.notes.replace(/"/g,'&quot;')}" oninput="state.entries[${i}].notes=this.value">` : ''}
+    </div>`;
+  return html;
+}
+
+function setCellHTML(entry, i, s) {
+  return `<div class="setcell">
+      <div class="setlabel">Set ${s+1}</div>
+      <div class="mini">
+        <button onclick="adjustRep(${i},${s},-1)">\u2212</button>
+        <span class="v" id="rep-${i}-${s}">${entry.reps[s]}</span>
+        <button onclick="adjustRep(${i},${s},1)">+</button>
+      </div>
+    </div>`;
+}
+function renderSetCells(entry, i) {
+  let row1 = '';
+  for (let s = 0; s < Math.min(entry.activeSets, 3); s++) row1 += setCellHTML(entry, i, s);
+  let html = `<div class="setgrid">${row1}</div>`;
+  if (entry.activeSets > 3) {
+    let row2 = '';
+    for (let s = 3; s < entry.activeSets; s++) row2 += setCellHTML(entry, i, s);
+    html += `<div class="setgrid-row2">${row2}</div>`;
+  }
+  return html;
+}
+
+function toggleChecklist(label) { state.checklist[label] = !state.checklist[label]; renderStrength(); }
+
+function selectVariant(i, variantName) {
+  const cfg = STRENGTH_DAYS[state.day][i];
+  const oldNotes = state.entries[i].notes, oldNoteOpen = state.entries[i].noteOpen;
+  state.entries[i] = buildEntryFromConfig(state.day, cfg, variantName);
+  state.entries[i].notes = oldNotes; state.entries[i].noteOpen = oldNoteOpen;
+  renderStrength();
+}
+
+function setHeight(i, h) {
+  const entry = state.entries[i];
+  entry.height = h;
+  renderStrength();
+}
+
+function adjustWeight(i, delta) {
+  const entry = state.entries[i];
+  entry.weight = clamp(Math.round((entry.weight + delta) * 10) / 10, entry.weightCfg.min, entry.weightCfg.max);
+  document.getElementById(`w-val-${i}`).textContent = fmtWeight(entry.weightCfg, entry.weight);
+}
+function adjustBand(i, tier, delta) {
+  const entry = state.entries[i];
+  entry.weight[tier] = clamp((entry.weight[tier] || 0) + delta, 0, BAND_MAX_PER_TIER);
+  document.getElementById(`band-${i}-${tier}`).textContent = entry.weight[tier];
+  document.getElementById(`band-total-${i}`).textContent = fmtWeight(entry.weightCfg, entry.weight);
+}
+function adjustSets(i, delta) {
+  const entry = state.entries[i];
+  entry.activeSets = clamp(entry.activeSets + delta, 0, 5);
+  document.getElementById(`sets-val-${i}`).textContent = entry.activeSets;
+  document.getElementById(`setgrid-${i}`).innerHTML = renderSetCells(entry, i);
+  if (!entry.topOverridden) {
+    entry.topOfRange = recomputeTopOfRange(entry);
+    updateTopBadge(i);
+  }
+}
+function recomputeTopOfRange(entry) {
+  if (entry.activeSets === 0) return "N";
+  for (let s = 0; s < entry.activeSets; s++) if (entry.reps[s] < entry.repTop) return "N";
+  return "Y";
+}
+function adjustRep(i, setIdx, delta) {
+  const entry = state.entries[i];
+  entry.reps[setIdx] = clamp(entry.reps[setIdx] + delta, 0, 99);
+  document.getElementById(`rep-${i}-${setIdx}`).textContent = entry.reps[setIdx];
+  if (!entry.topOverridden) {
+    entry.topOfRange = recomputeTopOfRange(entry);
+    updateTopBadge(i);
+  }
+}
+function toggleTopOverride(i) {
+  const entry = state.entries[i];
+  entry.topOfRange = entry.topOfRange === "Y" ? "N" : "Y";
+  entry.topOverridden = true;
+  updateTopBadge(i);
+}
+function updateTopBadge(i) {
+  const el = document.getElementById(`top-badge-${i}`);
+  el.textContent = `Top of Range: ${state.entries[i].topOfRange}`;
+  el.className = `badge ${state.entries[i].topOfRange==='Y'?'top':''}`;
+}
+function toggleNote(i) { state.entries[i].noteOpen = !state.entries[i].noteOpen; renderStrength(); }
+
+function persistStrengthBaselines() {
+  state.entries.forEach((entry, i) => {
+    if (entry.weightCfg) {
+      const key = `w_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+      lsSet(key, entry.weight);
+    }
+    if (entry.heights) {
+      lsSet(`h_${state.day}_${entry.variantBase}`, entry.height);
+    }
+    const perfKey = `perf_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+    lsSet(perfKey, { reps: entry.reps, activeSets: entry.activeSets, topOverridden: entry.topOverridden, topOfRange: entry.topOfRange });
+  });
+}
+
+function buildStrengthPayload() {
+  const entries = [];
+  Object.keys(state.checklist).forEach(label => {
+    entries.push({ item: label, category: "checklist", done: state.checklist[label] });
+  });
+  state.entries.forEach(e => {
+    const rec = {
+      item: e.item, category: "exercise",
+      target: e.variantOverrideTarget || e.target || "",
+      weight: !e.weightCfg ? "BW" : (e.weightCfg.type === "bandmix" ? String(bandTotal(e.weight)) : String(e.weight)),
+      reps_or_time: e.reps.map((v, idx) => idx < e.activeSets ? String(v) : "0"),
+      top_of_range: e.topOfRange, notes: e.notes || "",
+    };
+    if (e.heights) rec.step_height_in = e.height;
+    if (e.weightCfg && e.weightCfg.type === "bandmix") {
+      const breakdown = {};
+      BAND_TIERS.forEach(t => { if (e.weight[t] > 0) breakdown[String(t)] = e.weight[t]; });
+      rec.band_breakdown = breakdown;
+    }
+    entries.push(rec);
+  });
+  state.stretches.forEach(s => {
+    entries.push({ item: s.item, category: "stretch", done: s.done });
+  });
+  return { schema_version: "1.5", date: state.date, day_type: "strength", day_number: state.day, entries };
+}
+
+/* ============================== CYCLING ============================== */
+
+function goCycling(dayNum) {
+  state = { screen:'cycling', day:dayNum, date: todayLocal(), phase:'Recovery', equipment:'Road', miles:10, duration:60,
+    stretches: makeStretchState('cycling'), notes:'', noteOpen:false };
+  renderCycling();
+  window.scrollTo(0, 0);
+}
+function renderCycling() {
+  const phases = ['Recovery','Half-max','Max'];
+  const equipmentOptions = ['Road','Keiser','LifeFitness'];
+  const isExtra = state.day === 'Extra';
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>${isExtra ? 'Extra' : 'Day ' + state.day} \u2014 Cardio</h1>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>`;
+  if (!isExtra) {
+    html += `<div class="card">
+      <div class="label" style="font-size:14px;margin-bottom:6px;">Rotation Phase</div>
+      <div class="grid3">
+        ${phases.map(p => `<button class="variant-btn ${state.phase===p?'selected':''}" onclick="setPhase('${p}')">${p}</button>`).join('')}
+      </div>
+    </div>`;
+  }
+  html += `<div class="card">
+      <div class="label" style="font-size:14px;margin-bottom:6px;">Equipment</div>
+      <div class="grid3">
+        ${equipmentOptions.map(e => `<button class="variant-btn ${state.equipment===e?'selected':''}" onclick="setEquipment('${e}')">${e}</button>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      ${stepperRowHTML('Miles', 'miles-val', state.miles + ' mi', {
+        minusCoarse: { onclick: 'adjMiles(-5)', label: '\u22125' }, minus: { onclick: 'adjMiles(-1)', label: '\u22121' },
+        plus: { onclick: 'adjMiles(1)', label: '+1' }, plusCoarse: { onclick: 'adjMiles(5)', label: '+5' },
+      })}
+      ${stepperRowHTML('Duration', 'dur-val', fmtDuration(state.duration), {
+        minusCoarse: { onclick: 'adjDuration(-15)', label: '\u221215' }, minus: { onclick: 'adjDuration(-5)', label: '\u22125' },
+        plus: { onclick: 'adjDuration(5)', label: '+5' }, plusCoarse: { onclick: 'adjDuration(15)', label: '+15' },
+      })}
+      <a class="note-link" onclick="toggleCyclingNote()">${state.noteOpen?'Hide note':'+ note'}</a>
+      ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
+    </div>`;
+  html += renderStretchChecklist(state.stretches, 'cyc');
+  html += `<button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+  html += timerBarHTML();
+  app.innerHTML = html;
+}
+function setPhase(p) { state.phase = p; renderCycling(); }
+function setEquipment(e) { state.equipment = e; renderCycling(); }
+function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.getElementById('miles-val').textContent = state.miles + ' mi'; }
+function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
+function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
+function buildCyclingPayload() {
+  const rec = { schema_version:"1.5", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
+  if (state.day !== 'Extra') rec.phase = state.phase;
+  rec.equipment = state.equipment;
+  rec.miles = state.miles; rec.duration_min = state.duration;
+  rec.stretches = state.stretches.map(s => ({ item: s.item, done: s.done }));
+  rec.notes = state.notes || "";
+  return rec;
+}
+
+/* ============================== YOGA ============================== */
+
+function goYoga() {
+  state = { screen:'yoga', date: todayLocal(),
+    poses: YOGA_POSES.map(p => ({ pose: p.pose, done: false })), notes:'', noteOpen:false };
+  renderYoga();
+  window.scrollTo(0, 0);
+}
+function renderYoga() {
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Day 7 \u2014 Yoga</h1>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>
+    <div class="card"><div class="card-title">Poses</div>`;
+  state.poses.forEach((p, i) => {
+    const d = YOGA_POSES[i];
+    html += `<div class="check-item">
+      <div class="toggle-row">
+        <span class="name" onclick="toggleDetail('yoga-${i}')">${p.pose}</span>
+        <button class="toggle-btn ${p.done?'on':''}" onclick="toggleYogaPose(${i})">${p.done?'Done \u2713':'Not done'}</button>
+      </div>
+      <div style="display:none;" id="detail-yoga-${i}">${detailBlockHTML(`yoga-${i}`, d.note, d.ref, d.dur)}</div>
+    </div>`;
+  });
+  html += `</div>
+    <div class="card">
+      <a class="note-link" onclick="toggleYogaNote()">${state.noteOpen?'Hide note':'+ note'}</a>
+      ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
+    </div>
+    <button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+  html += timerBarHTML();
+  app.innerHTML = html;
+}
+function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
+function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
+function buildYogaPayload() {
+  return { schema_version:"1.5", date: state.date, day_type:"yoga",
+    poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
+}
+
+/* ============================== ACHILLES CHECK ============================== */
+
+function goAchilles() { state = { screen:'achilles', date: todayLocal(), pain: 0, increased: false, notes:'', noteOpen:false }; renderAchilles(); window.scrollTo(0, 0); }
+function renderAchilles() {
+  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Weekly Achilles Check</h1>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>
+    <div class="card">
+      <div class="label" style="font-size:14px;margin-bottom:6px;">Pain / Stiffness (0-5)</div>
+      <div class="grid3" style="margin-bottom:8px;">
+        ${[0,1,2].map(n=>`<button class="variant-btn ${state.pain===n?'selected':''}" onclick="setPain(${n})">${n}</button>`).join('')}
+      </div>
+      <div class="grid3">
+        ${[3,4,5].map(n=>`<button class="variant-btn ${state.pain===n?'selected':''}" onclick="setPain(${n})">${n}</button>`).join('')}
+      </div>
+      <hr class="sep">
+      <div class="toggle-row">
+        <span style="font-size:14px;">Morning stiffness increased?</span>
+        <button class="toggle-btn ${state.increased?'on':''}" onclick="toggleIncreased()">${state.increased?'Yes':'No'}</button>
+      </div>
+      <a class="note-link" onclick="toggleAchNote()">${state.noteOpen?'Hide note':'+ note'}</a>
+      ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
+    </div>
+    <button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+}
+function setPain(n) { state.pain = n; renderAchilles(); }
+function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
+function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
+function buildAchillesPayload() {
+  return { schema_version:"1.5", date: state.date, day_type:"achilles_check",
+    pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
+}
+
+/* ============================== ROM CHECK ============================== */
+
+function goRom() { state = { screen:'rom', date: todayLocal(), distance: 5.5, notes:'', noteOpen:false }; renderRom(); window.scrollTo(0, 0); }
+function renderRom() {
+  app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Hip Hinge ROM Check</h1>
+    <p class="sub">Every 4\u20136 weeks.</p>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>
+    <div class="card">
+      ${stepperRowHTML('Distance', 'rom-val', state.distance + ' in', {
+        minus: { onclick: 'adjRom(-0.5)', label: '\u2212' }, plus: { onclick: 'adjRom(0.5)', label: '+' },
+      })}
+      <a class="note-link" onclick="toggleRomNote()">${state.noteOpen?'Hide note':'+ note'}</a>
+      ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
+    </div>
+    <button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+}
+function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
+function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
+function buildRomPayload() {
+  return { schema_version:"1.5", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+}
+
+/* ============================== BODY METRICS ============================== */
+
+function goBodyMetrics() {
+  const values = {};
+  BODY_METRICS_FIELDS.forEach(f => {
+    const stored = lsGet(`bm_${f.key}`, null);
+    values[f.key] = (typeof stored === 'number') ? stored : f.default;
+  });
+  state = { screen: 'bodymetrics', date: todayLocal(), values, notes: '', noteOpen: false };
+  renderBodyMetrics();
+  window.scrollTo(0, 0);
+}
+
+function renderBodyMetrics() {
+  let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
+    <h1>Weight / Body Metrics</h1>
+    <div class="card">
+      <label style="font-size:13px;color:#6e6e73;">Date</label>
+      <input type="date" value="${state.date}" onchange="state.date=this.value">
+    </div>
+    <div class="card">`;
+  BODY_METRICS_FIELDS.forEach(f => {
+    html += stepperRowHTML(f.label, `bm-val-${f.key}`, fmtBodyMetric(f, state.values[f.key]), {
+      minusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', -2)`, label: '\u2212\u2212' } : null,
+      minus: { onclick: `adjustBodyMetric('${f.key}', -1)`, label: '\u2212' },
+      plus: { onclick: `adjustBodyMetric('${f.key}', 1)`, label: '+' },
+      plusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', 2)`, label: '++' } : null,
+    });
+  });
+  html += `</div>
+    <div class="card">
+      <a class="note-link" onclick="toggleBMNote()">${state.noteOpen?'Hide note':'+ note'}</a>
+      ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
+    </div>
+    <button class="btn" onclick="shareNow()">Share</button>
+    <button class="btn" onclick="goHome()">Home</button>
+    <div id="status"></div>`;
+  app.innerHTML = html;
+}
+
+function fmtBodyMetric(f, val) {
+  const decimals = f.fineStep < 1 ? 1 : 0;
+  return `${val.toFixed(decimals)}${f.unit ? ' ' + f.unit : ''}`;
+}
+
+function adjustBodyMetric(key, direction) {
+  const f = BODY_METRICS_FIELDS.find(x => x.key === key);
+  const step = Math.abs(direction) === 2 ? f.coarseStep : f.fineStep;
+  const delta = direction > 0 ? step : -step;
+  let v = state.values[key] + delta;
+  const decimals = f.fineStep < 1 ? 1 : 0;
+  v = Number(v.toFixed(decimals)); // avoid float drift (e.g. 207 * 0.1 !== 20.7 in binary float)
+  v = clamp(v, f.min, f.max);
+  state.values[key] = v;
+  document.getElementById(`bm-val-${key}`).textContent = fmtBodyMetric(f, v);
+}
+
+function toggleBMNote() { state.noteOpen = !state.noteOpen; renderBodyMetrics(); }
+
+function persistBodyMetrics() {
+  BODY_METRICS_FIELDS.forEach(f => lsSet(`bm_${f.key}`, state.values[f.key]));
+}
+
+function buildBodyMetricsPayload() {
+  const rec = { schema_version: "1.5", date: state.date, day_type: "body_metrics" };
+  BODY_METRICS_FIELDS.forEach(f => { rec[f.key] = state.values[f.key]; });
+  rec.notes = state.notes || "";
+  return rec;
+}
+
+/* ============================== SHARE ============================== */
+/* Previously routed through an intermediate Review screen (JSON preview, then a second
+   tap to actually share). Removed 2026-07 at Mark's request, once field format had been
+   trusted through live use: Share now fires directly from the entry screen. */
+
+function currentPayloadAndName() {
+  switch (state.screen) {
+    case 'strength': return [buildStrengthPayload(), `workout_strength_day${state.day}_${state.date}`];
+    case 'cycling': return [buildCyclingPayload(), `workout_cycling_${state.day === 'Extra' ? 'extra' : 'day' + state.day}_${state.date}`];
+    case 'yoga': return [buildYogaPayload(), `workout_yoga_${state.date}`];
+    case 'achilles': return [buildAchillesPayload(), `workout_achilles_check_${state.date}`];
+    case 'rom': return [buildRomPayload(), `workout_rom_check_${state.date}`];
+    case 'bodymetrics': return [buildBodyMetricsPayload(), `workout_body_metrics_${state.date}`];
+  }
+}
+function shareNow() {
+  if (state.screen === 'strength') persistStrengthBaselines();
+  if (state.screen === 'bodymetrics') persistBodyMetrics();
+  const [payload, filenameBase] = currentPayloadAndName();
+  shareJSON(payload, filenameBase, 'status');
+}
+
+/* ============================== WAKE LOCK (persistent screen) ============================== */
+/* Root cause found 2026-07: Safari requires the wake lock request to be made as a direct
+   result of a user gesture ("transient activation") — confirmed against the W3C spec
+   discussion (w3c/screen-wake-lock#350) and current implementation-guide sources, not just
+   inferred. Chrome does not have this requirement, which is why the original page-load-only
+   request (no gesture involved) could work in some environments but not in Safari — matching
+   exactly what was reported: screen still dimming/locking on the OS's normal timer, meaning
+   the lock was never actually held, not that it was held and then lost.
+
+   Also requires iOS 18.4+ when launched from the Home Screen (WebKit bug 254545) for the API
+   to function at all — fixed in Safari 18.4 (March 2025). I could not pull the bug thread's
+   later comments to confirm current status beyond that fix landing; Mark's device (iOS
+   26.5.2) is well past it either way, so this is very unlikely to be the remaining blocker
+   (see SPEC.md §5.6) — the missing-gesture issue above is.
+
+   Fix: request (or re-request, if not currently held) on every tap in the app, not just once
+   at page load. Since this is a tap-heavy workout-logging UI, the very first tap anywhere
+   establishes the lock, and if it's ever lost mid-session, the next tap re-establishes it —
+   turning Safari's gesture requirement into a non-issue rather than something the person has
+   to think about. */
+
+let wakeLockSentinel = null;
+let wakeLockStatus = 'unknown'; // 'active' | 'unsupported' | 'denied' | 'unknown' -- drives the Settings-screen readout
+
+async function requestWakeLock() {
+  if (!('wakeLock' in navigator)) { wakeLockStatus = 'unsupported'; updateWakeLockStatusUI(); return; }
+  try {
+    wakeLockSentinel = await navigator.wakeLock.request('screen');
+    wakeLockStatus = 'active';
+    updateWakeLockStatusUI();
+    // The system can release the lock for reasons other than the page going hidden
+    // (e.g. power-save mode engaging, or an OS-level decision) while the page stays
+    // visible the whole time. Re-request immediately on release too, whenever the page
+    // is still visible -- the next ensureWakeLock() tap-listener call also catches this,
+    // but this handles it even if the person hasn't tapped anything yet.
+    wakeLockSentinel.addEventListener('release', () => {
+      wakeLockSentinel = null;
+      wakeLockStatus = 'unknown';
+      updateWakeLockStatusUI();
+      if (document.visibilityState === 'visible') requestWakeLock();
+    });
+  } catch (err) {
+    // NotAllowedError covers both a missing user gesture and system-level denial (Low Power
+    // Mode, low battery) -- can't distinguish the two from the error alone, but the retry-on-
+    // next-tap behavior below resolves the gesture case regardless of which it was.
+    wakeLockStatus = 'denied';
+    updateWakeLockStatusUI();
+  }
+}
+
+// Called on every tap in the app (see the document-level listener below). No-ops immediately
+// if a lock is already held, so this isn't repeatedly hammering the API on every interaction.
+function ensureWakeLock() {
+  if (!wakeLockSentinel) requestWakeLock();
+}
+
+function updateWakeLockStatusUI() {
+  const el = document.getElementById('wakelock-status');
+  if (!el) return; // Settings screen isn't necessarily mounted right now -- fine, state is tracked regardless
+  const text = { active: '\u2713 Screen will stay on', unsupported: 'Not supported on this browser',
+    denied: '\u26a0\ufe0f Screen may sleep \u2014 tap anywhere to retry', unknown: 'Checking\u2026' }[wakeLockStatus];
+  el.textContent = text;
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !wakeLockSentinel) requestWakeLock();
+});
+document.addEventListener('click', ensureWakeLock, { capture: true });
+
+/* ============================== TIMER (analog sweep) ============================== */
+
+function timerHandDegrees(elapsedSec) {
+  return {
+    secDeg: (elapsedSec % 60) * 6,
+    minDeg: (elapsedSec / 60) * 6 % 360,
+  };
+}
+function fmtElapsed(elapsedSec) {
+  const totalSec = Math.floor(elapsedSec);
+  const mm = Math.floor(totalSec / 60);
+  const ss = totalSec % 60;
+  return `${mm}:${String(ss).padStart(2, '0')}`;
+}
+
+let timerAnimFrame = null;
+let timerStartTime = null;
+let timerRunning = false;
+let timerStartTimeout = null;
+
+function clockFaceSVG() {
+  let ticks = '';
+  for (let i = 0; i < 12; i++) {
+    const angle = i * 30;
+    const rad = angle * Math.PI / 180;
+    const x1 = 100 + 85 * Math.sin(rad), y1 = 100 - 85 * Math.cos(rad);
+    const x2 = 100 + 95 * Math.sin(rad), y2 = 100 - 95 * Math.cos(rad);
+    ticks += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#8e8e93" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 200 200" width="220" height="220">
+      <circle cx="100" cy="100" r="95" fill="white" stroke="#d1d1d6" stroke-width="2"/>
+      ${ticks}
+      <line id="timer-min-hand" x1="100" y1="100" x2="100" y2="55" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round" transform="rotate(0 100 100)"/>
+      <line id="timer-sec-hand" x1="100" y1="100" x2="100" y2="30" stroke="#0071e3" stroke-width="2" stroke-linecap="round" transform="rotate(0 100 100)"/>
+      <circle cx="100" cy="100" r="4" fill="#1d1d1f"/>
+    </svg>`;
+}
+
+function openTimer() {
+  const overlay = document.createElement('div');
+  overlay.id = 'timer-overlay';
+  overlay.className = 'timer-overlay';
+  overlay.innerHTML = `<div class="timer-card">
+      ${clockFaceSVG()}
+      <div class="timer-elapsed" id="timer-elapsed">0:00</div>
+      <button class="btn" onclick="restartTimer()">Restart</button>
+      <button class="btn secondary" onclick="closeTimer()">Close</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  startTimerAfterDelay();
+}
+
+function timerBarHTML() {
+  return `<div class="timer-fab-bar"><button class="btn" onclick="openTimer()">\u23f1 Start Timer</button></div>`;
+}
+
+function startTimerAfterDelay() {
+  cancelAnimationFrame(timerAnimFrame);
+  clearTimeout(timerStartTimeout);
+  timerRunning = false;
+  const minHand = document.getElementById('timer-min-hand');
+  const secHand = document.getElementById('timer-sec-hand');
+  if (minHand) minHand.setAttribute('transform', 'rotate(0 100 100)');
+  if (secHand) secHand.setAttribute('transform', 'rotate(0 100 100)');
+  const elapsedEl = document.getElementById('timer-elapsed');
+  if (elapsedEl) elapsedEl.textContent = '0:00';
+  timerStartTimeout = setTimeout(() => {
+    timerStartTime = Date.now();
+    timerRunning = true;
+    tickTimer();
+  }, 1000);
+}
+
+function tickTimer() {
+  if (!timerRunning) return;
+  const elapsedSec = (Date.now() - timerStartTime) / 1000;
+  const { secDeg, minDeg } = timerHandDegrees(elapsedSec);
+  const secHand = document.getElementById('timer-sec-hand');
+  const minHand = document.getElementById('timer-min-hand');
+  const elapsedEl = document.getElementById('timer-elapsed');
+  if (secHand) secHand.setAttribute('transform', `rotate(${secDeg} 100 100)`);
+  if (minHand) minHand.setAttribute('transform', `rotate(${minDeg} 100 100)`);
+  if (elapsedEl) elapsedEl.textContent = fmtElapsed(elapsedSec);
+  timerAnimFrame = requestAnimationFrame(tickTimer);
+}
+
+function restartTimer() { startTimerAfterDelay(); }
+
+function closeTimer() {
+  timerRunning = false;
+  cancelAnimationFrame(timerAnimFrame);
+  clearTimeout(timerStartTimeout);
+  const overlay = document.getElementById('timer-overlay');
+  if (overlay) overlay.remove();
+}
+
+/* ============================== INIT ============================== */
+renderHome();
+requestWakeLock();
+</script>
+</body>
+</html>
