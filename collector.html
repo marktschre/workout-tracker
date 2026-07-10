@@ -53,6 +53,8 @@
     font-size: 18px; font-weight: 600; color: #1d1d1f; line-height: 1;
   }
   .stepper button:active { background: #d1d1d6; }
+  .stepper button:disabled { background: #f2f2f2; color: #c7c7cc; }
+  .stepper-row.locked .label, .stepper-row.locked .val { color: #c7c7cc; }
   .stepper .val { min-width: 68px; text-align: center; font-size: 15px; font-weight: 600; }
   .setgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
   .setgrid-row2 { display: flex; justify-content: center; gap: 6px; margin: 0 0 8px; }
@@ -364,19 +366,22 @@ async function shareJSON(payload, filenameBase, statusElId) {
    coarse ±± pair is present — a 2-button row and a 4-button row line up on the inner
    −/value/+ columns instead of both being right-flush (which would misalign them). Missing
    coarse buttons are replaced with an empty placeholder that reserves the same grid column,
-   rather than omitted, so the fine buttons don't shift. */
+   rather than omitted, so the fine buttons don't shift.
+   opts.disabled (2026-07, for Body Metrics' Weight Only mode): renders all real buttons in
+   this row as native disabled buttons -- no onclick attribute at all, not just a CSS dim, so
+   there's no click handler to accidentally fire even via some other input method. */
 function stepperRowHTML(label, valId, valText, opts) {
-  const mc = opts.minusCoarse
-    ? `<button onclick="${opts.minusCoarse.onclick}">${opts.minusCoarse.label}</button>` : `<span class="ph"></span>`;
-  const pc = opts.plusCoarse
-    ? `<button onclick="${opts.plusCoarse.onclick}">${opts.plusCoarse.label}</button>` : `<span class="ph"></span>`;
-  return `<div class="stepper-row"><span class="label">${label}</span>
+  const dis = opts.disabled;
+  const btn = (b) => b
+    ? (dis ? `<button disabled>${b.label}</button>` : `<button onclick="${b.onclick}">${b.label}</button>`)
+    : `<span class="ph"></span>`;
+  return `<div class="stepper-row${dis ? ' locked' : ''}"><span class="label">${label}</span>
       <div class="stepper">
-        ${mc}
-        <button onclick="${opts.minus.onclick}">${opts.minus.label}</button>
+        ${btn(opts.minusCoarse)}
+        ${btn(opts.minus)}
         <span class="val" id="${valId}">${valText}</span>
-        <button onclick="${opts.plus.onclick}">${opts.plus.label}</button>
-        ${pc}
+        ${btn(opts.plus)}
+        ${btn(opts.plusCoarse)}
       </div>
     </div>`;
 }
@@ -1028,7 +1033,9 @@ function goBodyMetrics() {
     const stored = lsGet(`bm_${f.key}`, null);
     values[f.key] = (typeof stored === 'number') ? stored : f.default;
   });
-  state = { screen: 'bodymetrics', date: todayLocal(), values, notes: '', noteOpen: false };
+  // weightOnly is a per-session choice, not a saved preference -- always starts off, so a
+  // normal full entry is never silently skipped because of how the app was left last time.
+  state = { screen: 'bodymetrics', date: todayLocal(), values, notes: '', noteOpen: false, weightOnly: false };
   renderBodyMetrics();
   window.scrollTo(0, 0);
 }
@@ -1040,13 +1047,21 @@ function renderBodyMetrics() {
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
+    <div class="card">
+      <div class="toggle-row">
+        <span style="font-size:14px;">Weight Only</span>
+        <button class="toggle-btn ${state.weightOnly?'on':''}" onclick="toggleWeightOnly()">${state.weightOnly?'On':'Off'}</button>
+      </div>
+    </div>
     <div class="card">`;
   BODY_METRICS_FIELDS.forEach(f => {
+    const locked = state.weightOnly && f.key !== 'weight_lbs';
     html += stepperRowHTML(f.label, `bm-val-${f.key}`, fmtBodyMetric(f, state.values[f.key]), {
       minusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', -2)`, label: '\u2212\u2212' } : null,
       minus: { onclick: `adjustBodyMetric('${f.key}', -1)`, label: '\u2212' },
       plus: { onclick: `adjustBodyMetric('${f.key}', 1)`, label: '+' },
       plusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', 2)`, label: '++' } : null,
+      disabled: locked,
     });
   });
   html += `</div>
@@ -1060,12 +1075,15 @@ function renderBodyMetrics() {
   app.innerHTML = html;
 }
 
+function toggleWeightOnly() { state.weightOnly = !state.weightOnly; renderBodyMetrics(); }
+
 function fmtBodyMetric(f, val) {
   const decimals = f.fineStep < 1 ? 1 : 0;
   return `${val.toFixed(decimals)}${f.unit ? ' ' + f.unit : ''}`;
 }
 
 function adjustBodyMetric(key, direction) {
+  if (state.weightOnly && key !== 'weight_lbs') return; // belt-and-suspenders: buttons are already disabled in the DOM
   const f = BODY_METRICS_FIELDS.find(x => x.key === key);
   const step = Math.abs(direction) === 2 ? f.coarseStep : f.fineStep;
   const delta = direction > 0 ? step : -step;
@@ -1080,7 +1098,15 @@ function adjustBodyMetric(key, direction) {
 function toggleBMNote() { state.noteOpen = !state.noteOpen; renderBodyMetrics(); }
 
 function persistBodyMetrics() {
-  BODY_METRICS_FIELDS.forEach(f => lsSet(`bm_${f.key}`, state.values[f.key]));
+  // In Weight Only mode, only weight_lbs is actually written back to localStorage -- the
+  // other 6 fields' stored values are left completely untouched, not just unchanged in
+  // value. This is deliberate, not an incidental side effect of the fields being locked:
+  // it holds even if some future bug ever let a locked field's displayed value drift from
+  // what's actually stored (it can't overwrite history it never touches).
+  BODY_METRICS_FIELDS.forEach(f => {
+    if (state.weightOnly && f.key !== 'weight_lbs') return;
+    lsSet(`bm_${f.key}`, state.values[f.key]);
+  });
 }
 
 function buildBodyMetricsPayload() {
