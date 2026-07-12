@@ -30,6 +30,7 @@
   .btn:active { background: #005bb5; }
   .btn.secondary { background: #e5e5ea; color: #1d1d1f; }
   .btn.secondary:active { background: #d1d1d6; }
+  .btn .last-date { display:block; font-size:11px; font-weight:400; color:rgba(255,255,255,0.75); margin-top:2px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .home-section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
@@ -318,6 +319,16 @@ function fmtDuration(mins) {
   const m = mins % 60;
   return `${h}:${String(m).padStart(2, '0')}`;
 }
+function fmtLastDate(iso) {
+  if (!iso || typeof iso !== 'string') return '';
+  const parts = iso.split('-');
+  if (parts.length !== 3) return '';
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const m = parseInt(parts[1], 10);
+  const d = parseInt(parts[2], 10);
+  if (m < 1 || m > 12 || isNaN(d)) return '';
+  return months[m - 1] + ' ' + d;
+}
 
 function bandTotal(mix) {
   return BAND_TIERS.reduce((sum, t) => sum + t * (mix[t] || 0), 0);
@@ -403,15 +414,20 @@ function toggleDetail(id) {
 /* ============================== HOME ============================== */
 
 function renderHome() {
+  function strengthBtn(day) {
+    const d = lsGet('last_strength_' + day, null);
+    const sub = d ? '<small class="last-date">' + fmtLastDate(d) + '</small>' : '';
+    return '<button class="btn" onclick="goStrength(' + day + ')">Day ' + day + sub + '</button>';
+  }
   app.innerHTML = `
     <h1>Workout Collector</h1>
     <p class="sub">Tap a day to log it. Everything here is click/tap \u2014 no typing required except the rare optional note.</p>
     <div class="home-section-label">Strength Days</div>
     <div class="grid2">
-      <button class="btn" onclick="goStrength(1)">Day 1</button>
-      <button class="btn" onclick="goStrength(3)">Day 3</button>
-      <button class="btn" onclick="goStrength(4)">Day 4</button>
-      <button class="btn" onclick="goStrength(6)">Day 6</button>
+      ${strengthBtn(1)}
+      ${strengthBtn(3)}
+      ${strengthBtn(4)}
+      ${strengthBtn(6)}
     </div>
     <div class="home-section-label">Cardio Days</div>
     <div class="grid3">
@@ -820,6 +836,7 @@ function persistStrengthBaselines() {
     const perfKey = `perf_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
     lsSet(perfKey, { reps: entry.reps, activeSets: entry.activeSets, topOverridden: entry.topOverridden, topOfRange: entry.topOfRange });
   });
+  lsSet('last_strength_' + state.day, state.date);
 }
 
 function buildStrengthPayload() {
