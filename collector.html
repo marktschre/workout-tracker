@@ -447,11 +447,12 @@ function goHome() { state = { screen: 'home' }; renderHome(); window.scrollTo(0,
 
 /* ============================== SETTINGS: BACKUP / RESTORE ============================== */
 
+const BACKUP_KEY_PREFIXES = ['w_', 'h_', 'perf_', 'bm_', 'ach_', 'rom_', 'last_strength_'];
 function gatherSettingsData() {
   const data = {};
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.indexOf('w_') === 0) data[key] = localStorage.getItem(key);
+    if (key && BACKUP_KEY_PREFIXES.some(p => key.indexOf(p) === 0)) data[key] = localStorage.getItem(key);
   }
   return data;
 }
@@ -464,7 +465,7 @@ async function exportSettings() {
   const data = gatherSettingsData();
   const count = Object.keys(data).length;
   const json = JSON.stringify(data, null, 2);
-  const filename = `workout_settings_${todayLocal()}.json`;
+  const filename = `workout_settings.json`;
   const file = new File([json], filename, { type: "application/json" });
   const statusEl = document.getElementById('settings-status');
   if (count === 0) {
@@ -798,14 +799,26 @@ function adjustSets(i, delta) {
   }
 }
 function recomputeTopOfRange(entry) {
-  if (entry.activeSets === 0) return "N";
-  for (let s = 0; s < entry.activeSets; s++) if (entry.reps[s] < entry.repTop) return "N";
-  return "Y";
+  // Top of Range requires at least 3 unhidden (active) sets to be at repTop.
+  // Sets hidden by reducing activeSets do not count toward this, in either
+  // direction: a hidden set at repTop cannot help satisfy the threshold, and
+  // a hidden set below repTop cannot disqualify it.
+  let atTop = 0;
+  for (let s = 0; s < entry.activeSets; s++) if (entry.reps[s] >= entry.repTop) atTop++;
+  return atTop >= 3 ? "Y" : "N";
 }
 function adjustRep(i, setIdx, delta) {
   const entry = state.entries[i];
   entry.reps[setIdx] = clamp(entry.reps[setIdx] + delta, 0, 99);
   document.getElementById(`rep-${i}-${setIdx}`).textContent = entry.reps[setIdx];
+  // Cascade: this set's new value becomes the value for all later sets
+  // (higher index), overwriting them unconditionally, including sets
+  // currently hidden by the Sets stepper. Only forward, never backward.
+  for (let s = setIdx + 1; s < entry.reps.length; s++) {
+    entry.reps[s] = entry.reps[setIdx];
+    const cell = document.getElementById(`rep-${i}-${s}`);
+    if (cell) cell.textContent = entry.reps[s];
+  }
   if (!entry.topOverridden) {
     entry.topOfRange = recomputeTopOfRange(entry);
     updateTopBadge(i);
@@ -978,7 +991,13 @@ function buildYogaPayload() {
 
 /* ============================== ACHILLES CHECK ============================== */
 
-function goAchilles() { state = { screen:'achilles', date: todayLocal(), pain: 0, increased: false, notes:'', noteOpen:false }; renderAchilles(); window.scrollTo(0, 0); }
+function goAchilles() {
+  const stored = lsGet('ach_last', null);
+  const painVal = (stored && typeof stored.pain === 'number' && stored.pain >= 0 && stored.pain <= 5) ? stored.pain : 0;
+  const increasedVal = stored && typeof stored.increased === 'boolean' ? stored.increased : false;
+  state = { screen:'achilles', date: todayLocal(), pain: painVal, increased: increasedVal, notes:'', noteOpen:false };
+  renderAchilles(); window.scrollTo(0, 0);
+}
 function renderAchilles() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Weekly Achilles Check</h1>
@@ -1010,13 +1029,19 @@ function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
 function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
 function buildAchillesPayload() {
+  lsSet('ach_last', { pain: state.pain, increased: state.increased });
   return { schema_version:"1.5", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
 /* ============================== ROM CHECK ============================== */
 
-function goRom() { state = { screen:'rom', date: todayLocal(), distance: 5.5, notes:'', noteOpen:false }; renderRom(); window.scrollTo(0, 0); }
+function goRom() {
+  const stored = lsGet('rom_last', null);
+  const distanceVal = (stored && typeof stored.distance === 'number' && stored.distance >= 0 && stored.distance <= 14) ? stored.distance : 5.5;
+  state = { screen:'rom', date: todayLocal(), distance: distanceVal, notes:'', noteOpen:false };
+  renderRom(); window.scrollTo(0, 0);
+}
 function renderRom() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Hip Hinge ROM Check</h1>
@@ -1039,6 +1064,7 @@ function renderRom() {
 function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
 function buildRomPayload() {
+  lsSet('rom_last', { distance: state.distance });
   return { schema_version:"1.5", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
