@@ -161,8 +161,7 @@
 <body>
 <div id="app"></div>
 
-<script>
-/* ============================== REFERENCE DATA ============================== */
+<script>/* ============================== REFERENCE DATA ============================== */
 
 const EXERCISE_DETAILS = {
   "Goblet Squat": { note:"Depth limited by heel-rise; quad/anterior chain.", ref:"https://exrx.net/WeightExercises/Kettlebell/KBGobletSquat" },
@@ -379,6 +378,77 @@ function fmtWeight(cfg, val) {
   return `${val} ${cfg.unit}`;
 }
 function defaultBandMix() { const m = {}; BAND_TIERS.forEach(t => m[t] = 0); return m; }
+
+/* ============================== CROSS-DAY BASELINE MIGRATION ============================== */
+// One-time migration (2026-07): w_/h_/perf_ keys used to be scoped by day number
+// (e.g. w_1_Pull-Up, w_4_Pull-Up), so an exercise appearing on more than one strength
+// day (Pull-Up: Days 1,4; Weighted Sit-Up: Days 1,4; Bird Dog: Days 4,6) tracked separate
+// baselines per day instead of one true "most recent." This collapses each item's
+// per-day keys into a single shared key (e.g. w_Pull-Up), keeping the value from
+// whichever day was most recently completed per last_strength_<day>. Idempotent and
+// guarded by a completion flag so it runs at most once per browser/device.
+const MIGRATION_FLAG_KEY = 'migrated_crossday_baselines_v1';
+function migrateCrossDayBaselines() {
+  if (lsGet(MIGRATION_FLAG_KEY, false)) return;
+  try {
+    const dayNums = Object.keys(STRENGTH_DAYS);
+    // Determine each day's last-completed date so we know which day's value wins.
+    const dayDates = {};
+    dayNums.forEach(d => { dayDates[d] = lsGet(`last_strength_${d}`, null); });
+
+    // Build the set of (baseKeySuffix) variants actually present in config, per prefix,
+    // e.g. for w_/perf_: "Pull-Up", "Calf Raise_Calf Raise (Double-Leg)", etc.
+    // For h_: item only (heights are never variant-specific in config).
+    const suffixesByItem = {}; // item(+variant) suffix -> list of dayNums that carry it
+    dayNums.forEach(d => {
+      STRENGTH_DAYS[d].forEach(cfg => {
+        if (cfg.variants) {
+          cfg.variants.forEach(v => {
+            const suf = `${cfg.item}_${v}`;
+            (suffixesByItem[suf] = suffixesByItem[suf] || []).push(d);
+          });
+        } else {
+          (suffixesByItem[cfg.item] = suffixesByItem[cfg.item] || []).push(d);
+        }
+      });
+    });
+
+    Object.keys(suffixesByItem).forEach(suf => {
+      const days = suffixesByItem[suf];
+      // Pick winning day: latest last_strength_<day> date (string compare works for
+      // ISO yyyy-mm-dd); ties or missing dates fall back to highest day number, then
+      // 'Extra'-safe numeric sort isn't needed here since strength days are 1/3/4/6.
+      let winner = null;
+      days.forEach(d => {
+        const dt = dayDates[d];
+        if (!winner) { winner = d; return; }
+        const wDt = dayDates[winner];
+        if (dt && (!wDt || dt > wDt)) winner = d;
+        else if (dt && wDt && dt === wDt && Number(d) > Number(winner)) winner = d;
+      });
+      if (winner === null) return;
+
+      ['w_', 'perf_'].forEach(prefix => {
+        const oldKey = `${prefix}${winner}_${suf}`;
+        const raw = localStorage.getItem(oldKey);
+        if (raw !== null) localStorage.setItem(`${prefix}${suf}`, raw);
+      });
+      // h_ (step height) is item-only, never variant-suffixed in storage, but only
+      // applies to items with cfg.heights -- harmless no-op read if absent.
+      const itemOnly = suf.indexOf('_') === -1 ? suf : suf.split('_')[0];
+      const oldHKey = `h_${winner}_${itemOnly}`;
+      const rawH = localStorage.getItem(oldHKey);
+      if (rawH !== null) localStorage.setItem(`h_${itemOnly}`, rawH);
+
+      // Seed the new per-exercise timestamp from the winning day's last_strength_<day>.
+      if (dayDates[winner]) lsSet(`last_ex_${suf}`, dayDates[winner]);
+    });
+  } catch (e) {
+    // Non-fatal: worst case, old per-day keys remain and behave as pre-migration until
+    // the exercise is next completed, at which point the shared key is written fresh.
+  }
+  lsSet(MIGRATION_FLAG_KEY, true);
+}
 
 const app = document.getElementById('app');
 let state = { screen: 'home' };
@@ -647,7 +717,7 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
   const chosen = variantName || (isVariant ? cfg.variants[0] : null);
   const active = isVariant ? cfg.variantOverrides[chosen] : cfg;
   const wcfg = active.weight;
-  const baseKey = `w_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  const baseKey = `w_${cfg.item}${isVariant ? '_' + chosen : ''}`;
   const stored = lsGet(baseKey, null);
   let weightVal;
   if (!wcfg) weightVal = "BW";
@@ -656,7 +726,7 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
 
   let heightVal = null;
   if (cfg.heights) {
-    const hKey = `h_${dayNum}_${cfg.item}`;
+    const hKey = `h_${cfg.item}`;
     const storedH = lsGet(hKey, null);
     heightVal = cfg.heights.includes(storedH) ? storedH : cfg.heightDefault;
   }
@@ -668,7 +738,15 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
   // *current* repTop, so a later change to an exercise's target range (as happened to
   // Weighted Sit-Up and Bird Dog in this same update) correctly re-evaluates old reps
   // against the new target rather than carrying forward a stale Y/N.
-  const perfKey = `perf_${dayNum}_${cfg.item}${isVariant ? '_' + chosen : ''}`;
+  //
+  // Carry-forward keys (w_/h_/perf_) are keyed by exercise item (+ variant where
+  // applicable) only, NOT by day number (2026-07). An exercise like Pull-Up that appears
+  // on more than one strength day shares a single most-recent baseline: whichever day was
+  // completed last is what the next occurrence of that exercise -- on any day -- starts
+  // from. Variants remain separate namespaces (e.g. Calf Raise Double-Leg vs Single-Leg,
+  // or Dip's Ring Dip vs Push-Up) by explicit design choice, since those are different
+  // movements sharing a slot, not the same movement performed on different days.
+  const perfKey = `perf_${cfg.item}${isVariant ? '_' + chosen : ''}`;
   const storedPerf = lsGet(perfKey, null);
   const perfValid = storedPerf && typeof storedPerf === 'object'
     && Array.isArray(storedPerf.reps) && storedPerf.reps.length === 5
@@ -915,14 +993,19 @@ function toggleNote(i) { state.entries[i].noteOpen = !state.entries[i].noteOpen;
 function persistStrengthBaselines() {
   state.entries.forEach((entry, i) => {
     if (entry.weightCfg) {
-      const key = `w_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+      const key = `w_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
       lsSet(key, entry.weight);
     }
     if (entry.heights) {
-      lsSet(`h_${state.day}_${entry.variantBase}`, entry.height);
+      lsSet(`h_${entry.variantBase}`, entry.height);
     }
-    const perfKey = `perf_${state.day}_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+    const perfKey = `perf_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
     lsSet(perfKey, { reps: entry.reps, activeSets: entry.activeSets, topOverridden: entry.topOverridden, topOfRange: entry.topOfRange });
+    // Per-exercise timestamp (2026-07): governs which day's data is treated as the most
+    // recent baseline for exercises shared across strength days (e.g. Pull-Up on Days 1
+    // and 4). Also lays groundwork for a future "days since last performed" feature.
+    const tsKey = `last_ex_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
+    lsSet(tsKey, state.date);
   });
   lsSet('last_strength_' + state.day, state.date);
 }
@@ -1477,6 +1560,7 @@ function closeTimer() {
 }
 
 /* ============================== INIT ============================== */
+migrateCrossDayBaselines();
 renderHome();
 requestWakeLock();
 </script>
