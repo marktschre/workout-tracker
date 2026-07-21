@@ -31,6 +31,7 @@
   .btn.secondary { background: #e5e5ea; color: #1d1d1f; }
   .btn.secondary:active { background: #d1d1d6; }
   .btn .last-date { display:block; font-size:11px; font-weight:400; color:rgba(255,255,255,0.75); margin-top:2px; }
+  .btn.secondary .last-date { color:rgba(29,29,31,0.6); }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .home-section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
@@ -105,8 +106,15 @@
   }
   hr.sep { border: none; border-top: 1px solid #e5e5ea; margin: 12px 0; }
   input[type="date"] {
-    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d1d1d6;
+    /* Safari renders its own internal rounded "chip" around the displayed date text
+       inside a type=date input. With only 12px of padding that internal chip can
+       visually press against or cross the outer box's edge, especially at larger
+       Dynamic Type sizes. Extra padding/min-height gives it clear margin on all sides
+       so the chip stays fully contained and centered within the outer rounded box. */
+    width: 100%; padding: 14px 16px; min-height: 46px; box-sizing: border-box;
+    border-radius: 10px; border: 1px solid #d1d1d6;
     font-size: 16px; margin-top: 4px; background: white;
+    display: flex; align-items: center;
   }
   pre.json-preview {
     background: #1d1d1f; color: #7fd97f; font-size: 11px; padding: 10px; border-radius: 10px;
@@ -133,10 +141,19 @@
   .timer-elapsed { font-size: 22px; font-weight: 700; margin: 14px 0; font-variant-numeric: tabular-nums; }
   .btn.secondary.small { font-size: 14px; }
   .timer-fab-bar {
+    /* Mobile Safari sometimes re-renders position:fixed elements mid-scroll while its
+       address bar collapses/expands, making them appear to drift toward mid-screen
+       during the gesture before snapping back to bottom:0 at rest. Forcing this layer
+       onto its own GPU compositing layer (translateZ/will-change) keeps Safari from
+       re-flowing it against the animating visual viewport. This is a known platform
+       quirk without a guaranteed fix across all iOS/Safari versions -- confirm on an
+       actual iPhone/iPad after this change; if it still drifts, the remaining option
+       is switching to JS-driven positioning via the visualViewport API. */
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
     background: rgba(242,242,247,0.92); backdrop-filter: blur(8px);
     border-top: 1px solid #d1d1d6;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    transform: translateZ(0); will-change: transform; -webkit-transform: translateZ(0);
   }
   .timer-fab-bar .btn { max-width: 520px; margin: 0 auto; }
 </style>
@@ -165,6 +182,8 @@ const EXERCISE_DETAILS = {
   "Bird Dog": { note:"Anti-extension/rotation; opposite arm-leg reach, neutral spine, no twist.", ref:"https://exrx.net/WeightExercises/ErectorSpinae/BWBirdDog" },
   "Ring Row": { note:"Scalable via foot position (more horizontal = harder).", ref:"https://gmb.io/rings/" },
   "Pallof Press": { note:"Anti-rotation; press straight out from chest, resist the band's pull to the side.", ref:"https://weighttraining.guide/exercises/cable-horizontal-pallof-press/" },
+  "Calf Raise (Double-Leg)": { note:"Slow controlled tempo both directions, no bounce/ballistic loading (Achilles). Both feet on the ground.", ref:"https://exrx.net/WeightExercises/Gastrocnemius/BWStandingCalfRaise" },
+  "Calf Raise (Single-Leg)": { note:"Slow controlled tempo both directions, no bounce/ballistic loading (Achilles). Unlocked only after sustained pain-free tolerance of Double-Leg.", ref:"https://exrx.net/WeightExercises/Gastrocnemius/BWSingleLegCalfRaise" },
 };
 
 const STRETCH_DETAILS = {
@@ -226,6 +245,19 @@ const STRENGTH_DAYS = {
     { item:"DB Step-Up", target:"10", repDefault:10, repTop:10, unit:"reps/leg",
       tempo:"2-3 sec down", heights:[12,14,16], heightDefault:14,
       weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
+    { item:"Calf Raise", target:"12-15", unit:"reps",
+      // Unlocked in goStrength() only when the Achilles calf-raise level is Double-Leg or
+      // higher (see calfRaiseLevel()). Single-Leg replaces Double-Leg as a variant swap,
+      // not a second list entry -- Mark's explicit call, since it's the same movement at a
+      // harder stance, not a different exercise.
+      variants:["Calf Raise (Double-Leg)","Calf Raise (Single-Leg)"],
+      variantOverrides: {
+        "Calf Raise (Double-Leg)": { target:"12-15", repDefault:12, repTop:15,
+          tempo:"Slow, controlled both directions -- no bounce", weight:null },
+        "Calf Raise (Single-Leg)": { target:"12-15", repDefault:12, repTop:15,
+          tempo:"Slow, controlled both directions -- no bounce",
+          weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs/hand",bwLabel:"BW"} },
+      } },
     { item:"Pull-Up", target:"6-12", repDefault:6, repTop:12, unit:"reps",
       tempo:"3 sec down",
       weight:{type:"simple",min:0,max:60,step:5,default:0,unit:"lbs added",bwLabel:"BW"} },
@@ -419,6 +451,10 @@ function renderHome() {
     const sub = d ? '<small class="last-date">' + fmtLastDate(d) + '</small>' : '';
     return '<button class="btn" onclick="goStrength(' + day + ')">Day ' + day + sub + '</button>';
   }
+  function lastSub(key) {
+    const d = lsGet(key, null);
+    return d ? '<small class="last-date">' + fmtLastDate(d) + '</small>' : '';
+  }
   app.innerHTML = `
     <h1>Workout Collector</h1>
     <p class="sub">Tap a day to log it. Everything here is click/tap \u2014 no typing required except the rare optional note.</p>
@@ -436,10 +472,10 @@ function renderHome() {
       <button class="btn" onclick="goCycling('Extra')">Extra</button>
     </div>
     <div class="home-section-label">Other</div>
-    <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga</button>
-    <button class="btn secondary" onclick="goAchilles()">Weekly Achilles Check</button>
-    <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check</button>
-    <button class="btn secondary" onclick="goBodyMetrics()">Weight / Body Metrics</button>
+    <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga${lastSub('last_yoga')}</button>
+    <button class="btn secondary" onclick="goAchilles()">Weekly Achilles Check${lastSub('last_achilles')}</button>
+    <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check${lastSub('last_rom')}</button>
+    <button class="btn secondary" onclick="goBodyMetrics()">Weight / Body Metrics${lastSub('last_bodymetrics')}</button>
     <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
   `;
 }
@@ -447,7 +483,7 @@ function goHome() { state = { screen: 'home' }; renderHome(); window.scrollTo(0,
 
 /* ============================== SETTINGS: BACKUP / RESTORE ============================== */
 
-const BACKUP_KEY_PREFIXES = ['w_', 'h_', 'perf_', 'bm_', 'ach_', 'rom_', 'last_strength_'];
+const BACKUP_KEY_PREFIXES = ['w_', 'h_', 'perf_', 'bm_', 'ach_', 'rom_', 'last_'];
 function gatherSettingsData() {
   const data = {};
   for (let i = 0; i < localStorage.length; i++) {
@@ -479,7 +515,11 @@ async function exportSettings() {
     return;
   }
   try {
-    await navigator.share({ files: [file], title: "Workout Settings Backup" });
+    // No `title` field here on purpose: passing one alongside `files` caused iOS's
+    // share sheet to surface the title string as its own separate text share item
+    // (visible as a second "file" -- actually a text snippet reading the title) next
+    // to the actual JSON file. Omitting it leaves only the real file in the share.
+    await navigator.share({ files: [file] });
     statusEl.textContent = `Shared ${filename} (${count} saved values). AirDrop is the fastest way to get it to your other device.`;
     statusEl.className = 'show ok';
   } catch (err) {
@@ -526,6 +566,10 @@ function renderSettings() {
       <p style="font-size:14px;margin:4px 0 10px;" id="wakelock-status">Checking\u2026</p>
       <button class="btn secondary" onclick="requestWakeLock()">Retry Now</button>
     </div>
+    <div class="card">
+      <div class="card-title">Calf-Raise Readiness</div>
+      ${calfRaiseReadinessHTML()}
+    </div>
     <div id="settings-status"></div>
     <button class="btn" onclick="goHome()">Home</button>`;
   updateWakeLockStatusUI();
@@ -565,8 +609,26 @@ function rerenderCurrent() {
 
 /* ============================== STRENGTH DAY ============================== */
 
+// Calf-Raise readiness: two independent 0-4 streak counters gate progression.
+// None -> Double-Leg requires ach_calf_raise_streak_double to reach 4.
+// Double-Leg -> Single-Leg requires ach_calf_raise_streak_single to reach 4, which only
+// accrues once the double-leg streak is already at 4 (see persistAchillesStreaks()).
+// The double-leg streak freezes at 4 once reached; a non-pain-free week at Single-Leg
+// drops the level back to Double-Leg immediately and resets the single-leg streak to 0
+// (Mark's explicit call -- full-level regression, not a gradual single-streak decrement).
+function calfRaiseLevel() {
+  const dbl = lsGet('ach_calf_raise_streak_double', 0);
+  const sgl = lsGet('ach_calf_raise_streak_single', 0);
+  if (dbl >= 4 && sgl >= 4) return 'single';
+  if (dbl >= 4) return 'double';
+  return 'none';
+}
+
 function goStrength(dayNum) {
   const exList = STRENGTH_DAYS[dayNum];
+  const level = dayNum === 1 ? calfRaiseLevel() : 'none';
+  const filteredList = exList.filter(cfg => cfg.item !== 'Calf Raise' || level !== 'none');
+  const calfVariant = level === 'single' ? 'Calf Raise (Single-Leg)' : 'Calf Raise (Double-Leg)';
   state = {
     screen: 'strength',
     day: dayNum,
@@ -574,7 +636,7 @@ function goStrength(dayNum) {
     checklist: { "Warm-up (5-min light cardio + dynamic prep)": false,
                  "Balance (single-leg stance, rest intervals)": false },
     stretches: makeStretchState(String(dayNum)),
-    entries: exList.map(cfg => buildEntryFromConfig(dayNum, cfg)),
+    entries: filteredList.map(cfg => buildEntryFromConfig(dayNum, cfg, cfg.item === 'Calf Raise' ? calfVariant : undefined)),
   };
   renderStrength();
   window.scrollTo(0, 0);
@@ -709,7 +771,20 @@ function renderExerciseControls(entry, i) {
       plus: { onclick: `adjustWeight(${i}, ${entry.weightCfg.step})`, label: '+' },
     });
   } else {
-    html += `<div class="stepper-row"><span class="label">Weight</span><span class="val" style="justify-self:end;">BW</span></div>`;
+    // BW-only exercises (Side Plank, Dip, Bird Dog, Push-Up, Ring Row): wrap "BW" in the
+    // same 5-column .stepper grid (with invisible .ph placeholders standing in for the
+    // +/- buttons) so its text lands in the middle "value" column -- the same visual
+    // position a real numeric weight stepper's value occupies -- instead of being flush
+    // against the row's right edge.
+    html += `<div class="stepper-row"><span class="label">Weight</span>
+      <div class="stepper">
+        <span class="ph"></span>
+        <span class="ph"></span>
+        <span class="val">BW</span>
+        <span class="ph"></span>
+        <span class="ph"></span>
+      </div>
+    </div>`;
   }
 
   if (entry.heights) {
@@ -1021,9 +1096,26 @@ function renderAchilles() {
       <a class="note-link" onclick="toggleAchNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
     </div>
+    <div class="card">
+      <div class="card-title">Calf-Raise Readiness</div>
+      ${calfRaiseReadinessHTML()}
+    </div>
     <button class="btn" onclick="shareNow()">Share</button>
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
+}
+function calfRaiseReadinessHTML() {
+  const level = calfRaiseLevel();
+  const labels = { none: 'None', double: 'Double-Leg', single: 'Single-Leg' };
+  let html = `<p style="font-size:14px;margin:4px 0;">Level: <strong>${labels[level]}</strong></p>`;
+  if (level === 'none') {
+    const n = lsGet('ach_calf_raise_streak_double', 0);
+    html += `<p style="font-size:13px;color:#6e6e73;margin:2px 0 0;">${n}/4 pain-free weeks to Double-Leg</p>`;
+  } else if (level === 'double') {
+    const n = lsGet('ach_calf_raise_streak_single', 0);
+    html += `<p style="font-size:13px;color:#6e6e73;margin:2px 0 0;">${n}/4 pain-free weeks to Single-Leg</p>`;
+  }
+  return html;
 }
 function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
@@ -1032,6 +1124,33 @@ function buildAchillesPayload() {
   lsSet('ach_last', { pain: state.pain, increased: state.increased });
   return { schema_version:"1.5", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
+}
+
+// Two independent 0-4 streaks gate Calf-Raise progression -- see calfRaiseLevel().
+// painFree drives both counters, but which counter moves (and how) depends on the
+// *level in effect before this check is recorded*:
+//   - None (double < 4): double streak moves by the normal +1/-1 formula, capped [0,4].
+//   - Double-Leg (double===4, single<4): double streak is frozen at 4; single streak
+//     moves by the normal +1/-1 formula, capped [0,4].
+//   - Single-Leg (single===4): a pain-free week is a no-op (already at max). A
+//     non-pain-free week is a full-level regression: single resets to 0, double stays
+//     frozen at 4 (Single-Leg -> Double-Leg, not a gradual decrement).
+function persistAchillesStreaks() {
+  const painFree = state.pain === 0 && state.increased === false;
+  const dbl = lsGet('ach_calf_raise_streak_double', 0);
+  const sgl = lsGet('ach_calf_raise_streak_single', 0);
+
+  if (dbl < 4) {
+    const newDbl = painFree ? Math.min(dbl + 1, 4) : Math.max(dbl - 1, 0);
+    lsSet('ach_calf_raise_streak_double', newDbl);
+    return;
+  }
+  if (sgl >= 4) {
+    if (!painFree) lsSet('ach_calf_raise_streak_single', 0);
+    return;
+  }
+  const newSgl = painFree ? Math.min(sgl + 1, 4) : Math.max(sgl - 1, 0);
+  lsSet('ach_calf_raise_streak_single', newSgl);
 }
 
 /* ============================== ROM CHECK ============================== */
@@ -1174,9 +1293,20 @@ function currentPayloadAndName() {
     case 'bodymetrics': return [buildBodyMetricsPayload(), `workout_body_metrics_${state.date}`];
   }
 }
+// Home-screen "last completed" date sub-labels (2026-07): extends the same pattern
+// last_strength_<day> already used for Days 1/3/4/6 to the four periodic-tab screens.
+// Written unconditionally at Share time, regardless of which fields on that screen
+// were actually touched -- e.g. Body Metrics' Weight Only mode still stamps
+// last_bodymetrics, since the intent is "when did I last visit this tab," not
+// "when did every field on it last change" (Mark's explicit call).
 function shareNow() {
   if (state.screen === 'strength') persistStrengthBaselines();
   if (state.screen === 'bodymetrics') persistBodyMetrics();
+  if (state.screen === 'achilles') persistAchillesStreaks();
+  if (state.screen === 'yoga') lsSet('last_yoga', state.date);
+  if (state.screen === 'achilles') lsSet('last_achilles', state.date);
+  if (state.screen === 'rom') lsSet('last_rom', state.date);
+  if (state.screen === 'bodymetrics') lsSet('last_bodymetrics', state.date);
   const [payload, filenameBase] = currentPayloadAndName();
   shareJSON(payload, filenameBase, 'status');
 }
