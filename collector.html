@@ -32,6 +32,14 @@
   .btn.secondary:active { background: #d1d1d6; }
   .btn .last-date { display:block; font-size:11px; font-weight:400; color:rgba(255,255,255,0.75); margin-top:2px; }
   .btn.secondary .last-date { color:rgba(29,29,31,0.6); }
+  /* "Suggested today" marker: narrow light-green band inside the button edge.
+     Inset ring so grid layout and tap targets are unchanged. */
+  .btn.suggested { box-shadow: inset 0 0 0 3px #86d98a; }
+  /* Other-section tint (soft blue) so Backup/Restore, which keeps plain
+     .secondary gray, permanently reads as the odd-one-out utility item. */
+  .btn.tint { background: #dde9f7; color: #1d1d1f; }
+  .btn.tint:active { background: #c9dcf2; }
+  .btn.tint .last-date { color: rgba(29,29,31,0.6); }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .home-section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
@@ -515,11 +523,71 @@ function toggleDetail(id) {
 
 /* ============================== HOME ============================== */
 
+// "Suggested" home-screen highlighting (2026-07): a light-green ring marks the
+// button(s) that are candidates for today. Rules (Mark's spec):
+//   Strength: the least recently completed of Days 1/3/4/6. Never-completed
+//     counts as least recent; ties (including multiple never-completed) break
+//     to the lowest day number.
+//   Cycling: the least recently completed of Days 2/5 (Extra is never itself
+//     suggested), but only if >= 2 days have elapsed since the most recent
+//     cycling event of ANY kind -- an Extra ride resets the gate (Mark's call).
+//     Never-completed counts as least recent; tie breaks to Day 2.
+//   Other (Yoga / Achilles / ROM / Body Metrics): each suggested independently
+//     once >= 5 days have elapsed since last completed, or if never completed.
+//   Backup / Restore: never suggested.
+// Cycling previously wrote no last-completed timestamps; last_cycling_<day>
+// (day = 2 | 5 | Extra) is new, stamped at Share time like the others, and
+// covered by backup via the existing last_ prefix. Date-only math: whole-day
+// difference between ISO YYYY-MM-DD strings, both parsed as UTC midnight.
+function daysBetween(isoFrom, isoTo) {
+  return Math.round((Date.parse(isoTo) - Date.parse(isoFrom)) / 86400000);
+}
+function suggestedStrengthDay() {
+  const days = [1, 3, 4, 6];
+  let best = null, bestDate = null;
+  for (const d of days) {
+    const dt = lsGet('last_strength_' + d, null);
+    if (dt === null) return d; // never completed wins; ascending order => lowest day
+    if (bestDate === null || dt < bestDate) { best = d; bestDate = dt; }
+  }
+  return best;
+}
+function suggestedCyclingDay(today) {
+  const stamps = [2, 5, 'Extra'].map(d => lsGet('last_cycling_' + d, null)).filter(Boolean);
+  if (stamps.length) {
+    const mostRecent = stamps.reduce((a, b) => (a > b ? a : b));
+    if (daysBetween(mostRecent, today) < 2) return null;
+  }
+  const d2 = lsGet('last_cycling_2', null);
+  const d5 = lsGet('last_cycling_5', null);
+  if (d2 === null) return 2;
+  if (d5 === null) return 5;
+  return d5 < d2 ? 5 : 2; // tie -> Day 2
+}
+function otherSuggested(key, today) {
+  const dt = lsGet(key, null);
+  return dt === null || daysBetween(dt, today) >= 5;
+}
+
 function renderHome() {
+  const today = todayLocal();
+  const sugStrength = suggestedStrengthDay();
+  const sugCycling = suggestedCyclingDay(today);
   function strengthBtn(day) {
     const d = lsGet('last_strength_' + day, null);
     const sub = d ? '<small class="last-date">' + fmtLastDate(d) + '</small>' : '';
-    return '<button class="btn" onclick="goStrength(' + day + ')">Day ' + day + sub + '</button>';
+    const cls = day === sugStrength ? 'btn suggested' : 'btn';
+    return '<button class="' + cls + '" onclick="goStrength(' + day + ')">Day ' + day + sub + '</button>';
+  }
+  function cyclingBtn(day, label) {
+    const cls = day === sugCycling ? 'btn suggested' : 'btn';
+    const arg = typeof day === 'number' ? day : "'" + day + "'";
+    const d = lsGet('last_cycling_' + day, null);
+    const sub = d ? '<small class="last-date">' + fmtLastDate(d) + '</small>' : '';
+    return '<button class="' + cls + '" onclick="goCycling(' + arg + ')">' + label + sub + '</button>';
+  }
+  function otherCls(key) {
+    return otherSuggested(key, today) ? 'btn tint suggested' : 'btn tint';
   }
   function lastSub(key) {
     const d = lsGet(key, null);
@@ -537,15 +605,15 @@ function renderHome() {
     </div>
     <div class="home-section-label">Cardio Days</div>
     <div class="grid3">
-      <button class="btn" onclick="goCycling(2)">Day 2</button>
-      <button class="btn" onclick="goCycling(5)">Day 5</button>
-      <button class="btn" onclick="goCycling('Extra')">Extra</button>
+      ${cyclingBtn(2, 'Day 2')}
+      ${cyclingBtn(5, 'Day 5')}
+      ${cyclingBtn('Extra', 'Extra')}
     </div>
     <div class="home-section-label">Other</div>
-    <button class="btn secondary" onclick="goYoga()">Day 7 \u2014 Yoga${lastSub('last_yoga')}</button>
-    <button class="btn secondary" onclick="goAchilles()">Weekly Achilles Check${lastSub('last_achilles')}</button>
-    <button class="btn secondary" onclick="goRom()">Hip Hinge ROM Check${lastSub('last_rom')}</button>
-    <button class="btn secondary" onclick="goBodyMetrics()">Weight / Body Metrics${lastSub('last_bodymetrics')}</button>
+    <button class="${otherCls('last_yoga')}" onclick="goYoga()">Day 7 \u2014 Yoga${lastSub('last_yoga')}</button>
+    <button class="${otherCls('last_achilles')}" onclick="goAchilles()">Weekly Achilles Check${lastSub('last_achilles')}</button>
+    <button class="${otherCls('last_rom')}" onclick="goRom()">Hip Hinge ROM Check${lastSub('last_rom')}</button>
+    <button class="${otherCls('last_bodymetrics')}" onclick="goBodyMetrics()">Weight / Body Metrics${lastSub('last_bodymetrics')}</button>
     <button class="btn secondary" onclick="goSettings()">Backup / Restore Baselines</button>
   `;
 }
@@ -1386,6 +1454,7 @@ function shareNow() {
   if (state.screen === 'strength') persistStrengthBaselines();
   if (state.screen === 'bodymetrics') persistBodyMetrics();
   if (state.screen === 'achilles') persistAchillesStreaks();
+  if (state.screen === 'cycling') lsSet('last_cycling_' + state.day, state.date);
   if (state.screen === 'yoga') lsSet('last_yoga', state.date);
   if (state.screen === 'achilles') lsSet('last_achilles', state.date);
   if (state.screen === 'rom') lsSet('last_rom', state.date);
