@@ -1087,10 +1087,16 @@ function buildStrengthPayload() {
     const rec = {
       item: e.item, category: "exercise",
       target: e.variantOverrideTarget || e.target || "",
-      weight: !e.weightCfg ? "BW" : (e.weightCfg.type === "bandmix" ? String(bandTotal(e.weight)) : String(e.weight)),
-      reps_or_time: e.reps.map((v, idx) => idx < e.activeSets ? String(v) : "0"),
-      top_of_range: e.topOfRange, notes: e.notes || "",
     };
+    // weight key: omitted entirely for exercises without a weight stepper (weightCfg null),
+    // so key-absence signals "no added weight supported" — mirrors the band_breakdown
+    // key-presence pattern. Exercises with a stepper always emit a numeric string.
+    if (e.weightCfg) {
+      rec.weight = e.weightCfg.type === "bandmix" ? String(bandTotal(e.weight)) : String(e.weight);
+    }
+    rec.reps_or_time = e.reps.map((v, idx) => idx < e.activeSets ? String(v) : "0");
+    rec.top_of_range = e.topOfRange;
+    rec.notes = e.notes || "";
     if (e.heights) rec.step_height_in = e.height;
     if (e.weightCfg && e.weightCfg.type === "bandmix") {
       const breakdown = {};
@@ -1102,7 +1108,7 @@ function buildStrengthPayload() {
   state.stretches.forEach(s => {
     entries.push({ item: s.item, category: "stretch", done: s.done });
   });
-  return { schema_version: "1.5", date: state.date, day_type: "strength", day_number: state.day, entries };
+  return { schema_version: "1.6", date: state.date, day_type: "strength", day_number: state.day, entries };
 }
 
 /* ============================== CYCLING ============================== */
@@ -1162,7 +1168,7 @@ function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.ge
 function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
-  const rec = { schema_version:"1.5", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
+  const rec = { schema_version:"1.6", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
   if (state.day !== 'Extra') rec.phase = state.phase;
   rec.equipment = state.equipment;
   rec.miles = state.miles; rec.duration_min = state.duration;
@@ -1211,7 +1217,7 @@ function renderYoga() {
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
 function buildYogaPayload() {
-  return { schema_version:"1.5", date: state.date, day_type:"yoga",
+  return { schema_version:"1.6", date: state.date, day_type:"yoga",
     poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
 }
 
@@ -1273,7 +1279,7 @@ function toggleIncreased() { state.increased = !state.increased; renderAchilles(
 function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
 function buildAchillesPayload() {
   lsSet('ach_last', { pain: state.pain, increased: state.increased });
-  return { schema_version:"1.5", date: state.date, day_type:"achilles_check",
+  return { schema_version:"1.6", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
@@ -1335,7 +1341,7 @@ function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
 function buildRomPayload() {
   lsSet('rom_last', { distance: state.distance });
-  return { schema_version:"1.5", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+  return { schema_version:"1.6", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
 /* ============================== BODY METRICS ============================== */
@@ -1423,7 +1429,7 @@ function persistBodyMetrics() {
 }
 
 function buildBodyMetricsPayload() {
-  const rec = { schema_version: "1.5", date: state.date, day_type: "body_metrics" };
+  const rec = { schema_version: "1.6", date: state.date, day_type: "body_metrics" };
   BODY_METRICS_FIELDS.forEach(f => { rec[f.key] = state.values[f.key]; });
   rec.notes = state.notes || "";
   return rec;
