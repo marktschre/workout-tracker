@@ -169,7 +169,8 @@
 <body>
 <div id="app"></div>
 
-<script>/* ============================== REFERENCE DATA ============================== */
+<script>
+/* ============================== REFERENCE DATA ============================== */
 
 const EXERCISE_DETAILS = {
   "Goblet Squat": { note:"Depth limited by heel-rise; quad/anterior chain.", ref:"https://exrx.net/WeightExercises/Kettlebell/KBGobletSquat" },
@@ -474,7 +475,10 @@ async function shareJSON(payload, filenameBase, statusElId) {
     return;
   }
   try {
-    await navigator.share({ files: [file], title: `Workout ${yymmdd()}` });
+    // No `title` field here on purpose: same reason as exportSettings -- passing a title
+    // alongside `files` can cause iOS's share sheet to surface the title string as its own
+    // separate text-share item next to the actual JSON file (see §5.5 and §7 in SPEC.md).
+    await navigator.share({ files: [file] });
     show(`Shared ${filename}. Confirm in Mail that the file is actually attached before sending.`, "ok");
   } catch (err) {
     if (err.name !== "AbortError") show("Share failed: " + err.message, "err");
@@ -736,8 +740,7 @@ function renderStretchChecklist(stretchArr, prefix) {
   return html;
 }
 function toggleStretch(prefix, i) {
-  const arr = prefix === 'cyc' ? state.stretches : state.stretches;
-  arr[i].done = !arr[i].done;
+  state.stretches[i].done = !state.stretches[i].done;
   rerenderCurrent();
 }
 function rerenderCurrent() {
@@ -985,8 +988,14 @@ function renderSetCells(entry, i) {
 function toggleChecklist(label) { state.checklist[label] = !state.checklist[label]; renderStrength(); }
 
 function selectVariant(i, variantName) {
-  const cfg = STRENGTH_DAYS[state.day][i];
-  const oldNotes = state.entries[i].notes, oldNoteOpen = state.entries[i].noteOpen;
+  // Look up config by name, not by position: when Calf Raise is filtered out (level=none)
+  // on Day 1, state.entries has 5 items while STRENGTH_DAYS[1] has 6, so indices ≥ 2
+  // diverge. A positional lookup would fetch the wrong config for any variant exercise
+  // at those positions. Currently harmless (no variant exercise appears after the Calf
+  // Raise slot on Day 1), but using the name closes the structural fragility.
+  const entry = state.entries[i];
+  const cfg = STRENGTH_DAYS[state.day].find(c => c.item === entry.variantBase);
+  const oldNotes = entry.notes, oldNoteOpen = entry.noteOpen;
   state.entries[i] = buildEntryFromConfig(state.day, cfg, variantName);
   state.entries[i].notes = oldNotes; state.entries[i].noteOpen = oldNoteOpen;
   renderStrength();
@@ -1278,7 +1287,9 @@ function setPain(n) { state.pain = n; renderAchilles(); }
 function toggleIncreased() { state.increased = !state.increased; renderAchilles(); }
 function toggleAchNote() { state.noteOpen = !state.noteOpen; renderAchilles(); }
 function buildAchillesPayload() {
-  lsSet('ach_last', { pain: state.pain, increased: state.increased });
+  // Note: ach_last persistence (carry-forward of pain/increased to next session) is written
+  // in shareNow() alongside all other explicit persist calls -- not here, to keep payload
+  // builders free of side effects. All other persist operations follow the same pattern.
   return { schema_version:"1.6", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
@@ -1337,10 +1348,19 @@ function renderRom() {
     <button class="btn" onclick="goHome()">Home</button>
     <div id="status"></div>`;
 }
-function adjRom(d) { state.distance = clamp(Math.round((state.distance + d)*10)/10, 0, 14); document.getElementById('rom-val').textContent = state.distance + ' in'; }
+function adjRom(d) {
+  // Number(toFixed(1)) avoids the binary float drift that Math.round(x*10)/10 can produce
+  // for non-binary-exact step values -- same fix applied to Body Metrics. ROM's step (0.5)
+  // happens to be binary-exact (2^-1), so no drift currently occurs, but keeping the
+  // pattern consistent avoids a latent hazard if the step ever changes.
+  state.distance = clamp(Number((state.distance + d).toFixed(1)), 0, 14);
+  document.getElementById('rom-val').textContent = state.distance + ' in';
+}
 function toggleRomNote() { state.noteOpen = !state.noteOpen; renderRom(); }
 function buildRomPayload() {
-  lsSet('rom_last', { distance: state.distance });
+  // Note: rom_last persistence (carry-forward of distance to next session) is written in
+  // shareNow() alongside all other explicit persist calls -- not here. Same principle as
+  // the achilles_check fix above.
   return { schema_version:"1.6", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
@@ -1460,6 +1480,12 @@ function shareNow() {
   if (state.screen === 'strength') persistStrengthBaselines();
   if (state.screen === 'bodymetrics') persistBodyMetrics();
   if (state.screen === 'achilles') persistAchillesStreaks();
+  // Carry-forward baselines for achilles and ROM (prefill these screens on next visit).
+  // Previously written as side effects inside the payload builders; moved here to keep all
+  // persist operations in one visible place, consistent with every other data type.
+  if (state.screen === 'achilles') lsSet('ach_last', { pain: state.pain, increased: state.increased });
+  if (state.screen === 'rom') lsSet('rom_last', { distance: state.distance });
+  // Last-completed date sub-labels for the Home screen.
   if (state.screen === 'cycling') lsSet('last_cycling_' + state.day, state.date);
   if (state.screen === 'yoga') lsSet('last_yoga', state.date);
   if (state.screen === 'achilles') lsSet('last_achilles', state.date);
