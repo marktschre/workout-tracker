@@ -809,13 +809,10 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
     heightVal = cfg.heights.includes(storedH) ? storedH : cfg.heightDefault;
   }
 
-  // Reps/Sets/Top-of-Range now persist across sessions the same way Weight/Step-Height
-  // already did (2026-07) -- previously every session started from hardcoded defaults with
-  // no way to see what was actually done last time. topOfRange is deliberately NOT trusted
-  // verbatim from storage unless it was a manual override: it's recomputed against the
-  // *current* repTop, so a later change to an exercise's target range (as happened to
-  // Weighted Sit-Up and Bird Dog in this same update) correctly re-evaluates old reps
-  // against the new target rather than carrying forward a stale Y/N.
+  // Reps/Sets/Top-of-Range persist across sessions the same way Weight/Step-Height do
+  // (2026-07). topOfRange is always recomputed against the current repTop on restore --
+  // a stored value is never trusted verbatim, so a later repTop change (e.g. Weighted
+  // Sit-Up/Bird Dog in the 2026-07 update) re-evaluates old reps correctly.
   //
   // Carry-forward keys (w_/h_/perf_) are keyed by exercise item (+ variant where
   // applicable) only, NOT by day number (2026-07). An exercise like Pull-Up that appears
@@ -832,7 +829,6 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
     && typeof storedPerf.activeSets === 'number' && storedPerf.activeSets >= 0 && storedPerf.activeSets <= 5;
   const repsVal = perfValid ? storedPerf.reps.slice() : [active.repDefault, active.repDefault, active.repDefault, active.repDefault, active.repDefault];
   const activeSetsVal = perfValid ? storedPerf.activeSets : 3;
-  const topOverriddenVal = perfValid ? !!storedPerf.topOverridden : false;
 
   const entry = {
     item: isVariant ? chosen : cfg.item,
@@ -851,12 +847,11 @@ function buildEntryFromConfig(dayNum, cfg, variantName) {
     reps: repsVal,
     activeSets: activeSetsVal,
     repTop: active.repTop,
-    topOverridden: topOverriddenVal,
     notes: "",
     noteOpen: false,
     detailOpen: false,
   };
-  entry.topOfRange = topOverriddenVal ? (perfValid ? storedPerf.topOfRange : "N") : recomputeTopOfRange(entry);
+  entry.topOfRange = recomputeTopOfRange(entry);
   return entry;
 }
 
@@ -959,7 +954,7 @@ function renderExerciseControls(entry, i) {
   html += `<div id="setgrid-${i}">${renderSetCells(entry, i)}</div>
     <div style="font-size:12px;color:#8e8e93;margin-top:-4px;">Tempo: ${entry.tempo || '—'}</div>
     <div>
-      <span class="badge ${entry.topOfRange==='Y'?'top':''}" id="top-badge-${i}" onclick="toggleTopOverride(${i})">
+      <span class="badge ${entry.topOfRange==='Y'?'top':''}" id="top-badge-${i}">
         Top of Range: ${entry.topOfRange}
       </span>
     </div>
@@ -1030,10 +1025,8 @@ function adjustSets(i, delta) {
   entry.activeSets = clamp(entry.activeSets + delta, 0, 5);
   document.getElementById(`sets-val-${i}`).textContent = entry.activeSets;
   document.getElementById(`setgrid-${i}`).innerHTML = renderSetCells(entry, i);
-  if (!entry.topOverridden) {
-    entry.topOfRange = recomputeTopOfRange(entry);
-    updateTopBadge(i);
-  }
+  entry.topOfRange = recomputeTopOfRange(entry);
+  updateTopBadge(i);
 }
 function recomputeTopOfRange(entry) {
   // Top of Range requires at least 3 unhidden (active) sets to be at repTop.
@@ -1056,15 +1049,7 @@ function adjustRep(i, setIdx, delta) {
     const cell = document.getElementById(`rep-${i}-${s}`);
     if (cell) cell.textContent = entry.reps[s];
   }
-  if (!entry.topOverridden) {
-    entry.topOfRange = recomputeTopOfRange(entry);
-    updateTopBadge(i);
-  }
-}
-function toggleTopOverride(i) {
-  const entry = state.entries[i];
-  entry.topOfRange = entry.topOfRange === "Y" ? "N" : "Y";
-  entry.topOverridden = true;
+  entry.topOfRange = recomputeTopOfRange(entry);
   updateTopBadge(i);
 }
 function updateTopBadge(i) {
@@ -1084,7 +1069,7 @@ function persistStrengthBaselines() {
       lsSet(`h_${entry.variantBase}`, entry.height);
     }
     const perfKey = `perf_${entry.variantBase}${entry.variants ? '_' + entry.item : ''}`;
-    lsSet(perfKey, { reps: entry.reps, activeSets: entry.activeSets, topOverridden: entry.topOverridden, topOfRange: entry.topOfRange });
+    lsSet(perfKey, { reps: entry.reps, activeSets: entry.activeSets, topOfRange: entry.topOfRange });
     // Per-exercise timestamp (2026-07): governs which day's data is treated as the most
     // recent baseline for exercises shared across strength days (e.g. Pull-Up on Days 1
     // and 4). Also lays groundwork for a future "days since last performed" feature.
