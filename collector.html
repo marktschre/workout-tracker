@@ -164,9 +164,47 @@
     transform: translateZ(0); will-change: transform; -webkit-transform: translateZ(0);
   }
   .timer-fab-bar .btn { max-width: 520px; margin: 0 auto; }
+
+  /* Status bar shield — white strip pinned to the top, height = iOS safe area
+     (the region occupied by the clock, signal, and battery icons). Scrolled
+     content passes behind it, keeping those indicators readable at all times. */
+  #status-shield {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top, 0px);
+    background: white;
+    z-index: 9999;
+    pointer-events: none;   /* taps pass through to content below */
+  }
+
+  /* Portrait orientation lock — CSS counter-rotation fallback.
+     Primary path: screen.orientation.lock('portrait') in INIT prevents
+     the device from rotating at all on iOS 16.4+ when installed as a PWA.
+     This @media rule is a safety net for older iOS or non-installed use.
+     Scroll note: touch gestures map to screen coordinates, not to the
+     rotated element's local axis, so swipe-to-scroll feels transposed in
+     the CSS fallback path. The API lock path has no such limitation. */
+  @media screen and (orientation: landscape) {
+    html {
+      transform: translateY(100vh) rotate(-90deg);
+      transform-origin: 0 0;
+      width: 100vh;     /* portrait width  = landscape height */
+      height: 100vw;    /* portrait height = landscape width  */
+      overflow: hidden;
+      position: fixed;
+      top: 0; left: 0;
+    }
+    body {
+      width: 100vh;
+      height: 100vw;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
 </style>
 </head>
 <body>
+<div id="status-shield"></div>
 <div id="app"></div>
 
 <script>
@@ -1038,13 +1076,16 @@ function adjustRep(i, setIdx, delta) {
   const entry = state.entries[i];
   entry.reps[setIdx] = clamp(entry.reps[setIdx] + delta, 0, 99);
   document.getElementById(`rep-${i}-${setIdx}`).textContent = entry.reps[setIdx];
-  // Cascade: this set's new value becomes the value for all later sets
-  // (higher index), overwriting them unconditionally, including sets
-  // currently hidden by the Sets stepper. Only forward, never backward.
-  for (let s = setIdx + 1; s < entry.reps.length; s++) {
-    entry.reps[s] = entry.reps[setIdx];
-    const cell = document.getElementById(`rep-${i}-${s}`);
-    if (cell) cell.textContent = entry.reps[s];
+  // Cascade: this set's new value becomes the value for all subsequent sets
+  // (higher index), overwriting them unconditionally. Only forward, never backward.
+  // Exception: Weighted Sit-Up tracks per-set reps independently — drops between
+  // sets are expected and meaningful, so each set stepper acts alone.
+  if (entry.variantBase !== 'Weighted Sit-Up') {
+    for (let s = setIdx + 1; s < entry.reps.length; s++) {
+      entry.reps[s] = entry.reps[setIdx];
+      const cell = document.getElementById(`rep-${i}-${s}`);
+      if (cell) cell.textContent = entry.reps[s];
+    }
   }
   entry.topOfRange = recomputeTopOfRange(entry);
   updateTopBadge(i);
@@ -1648,6 +1689,23 @@ function closeTimer() {
   const overlay = document.getElementById('timer-overlay');
   if (overlay) overlay.remove();
 }
+
+/* ============================== ORIENTATION LOCK ============================== */
+/* Portrait orientation lock — attempt Screen Orientation API lock first.
+   Works natively on iOS 16.4+ when installed as a home-screen PWA.
+   CSS @media counter-rotation in the style block handles older iOS.
+   typeof guard keeps this inert in the Node.js test harness. */
+(function lockPortrait() {
+  try {
+    if (typeof screen !== 'undefined' && screen.orientation
+        && typeof screen.orientation.lock === 'function') {
+      const attempt = () => screen.orientation.lock('portrait').catch(() => {});
+      attempt();
+      document.addEventListener('touchstart', attempt, { once: true, passive: true });
+      screen.orientation.addEventListener('change', attempt);
+    }
+  } catch (e) { /* orientation lock unavailable in this environment */ }
+})();
 
 /* ============================== INIT ============================== */
 migrateCrossDayBaselines();
