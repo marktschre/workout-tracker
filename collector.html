@@ -175,32 +175,6 @@
     z-index: 9999;
     pointer-events: none;   /* taps pass through to content below */
   }
-
-  /* Portrait orientation lock — CSS counter-rotation fallback.
-     Primary path: screen.orientation.lock('portrait') in INIT prevents
-     the device from rotating at all on iOS 16.4+ when installed as a PWA.
-     This @media rule is a safety net for older iOS or non-installed use.
-     Scroll note: touch gestures map to screen coordinates, not to the
-     rotated element's local axis, so swipe-to-scroll feels transposed in
-     the CSS fallback path. The API lock path has no such limitation. */
-  @media screen and (orientation: landscape) {
-    html {
-      transform: translateY(100vh) rotate(-90deg);
-      transform-origin: 0 0;
-      width: 100vh;     /* portrait width  = landscape height */
-      height: 100vw;    /* portrait height = landscape width  */
-      overflow: hidden;
-      position: fixed;
-      top: 0; left: 0;
-    }
-    body {
-      width: 100vh;
-      height: 100vw;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
 </style>
 </head>
 <body>
@@ -212,15 +186,15 @@
 
 const EXERCISE_DETAILS = {
   "Goblet Squat": { note:"Depth limited by heel-rise; quad/anterior chain.", ref:"https://exrx.net/WeightExercises/Kettlebell/KBGobletSquat" },
-  "DB Step-Up": { note:"Lead-heel drive only \u2014 no rear push-off (Achilles).", ref:"https://exrx.net/WeightExercises/Quadriceps/DBStepUp" },
+  "DB Step-Up": { note:"Lead-heel drive only — no rear push-off (Achilles).", ref:"https://exrx.net/WeightExercises/Quadriceps/DBStepUp" },
   "Pull-Up": { note:"Vertical pull; negative is key strength driver.", ref:"https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup" },
   "Weighted Sit-Up": { note:"No momentum.", ref:"https://exrx.net/WeightExercises/RectusAbdominis/WtSitUp" },
   "Side Plank": { note:"Isometric hold; keep hips lifted, body in a straight line.", ref:"https://exrx.net/WeightExercises/Obliques/BWSidePlank" },
   "Seated Band Row": { note:"Neutral spine, no hinge; brace core, watch pelvic tuck late in set.", ref:"https://exrx.net/WeightExercises/BackGeneral/CBSeatedRow" },
   "DB Bent-Over Row": { note:"Horizontal pull; full extension each rep, bench optional.", ref:"https://exrx.net/WeightExercises/BackGeneral/DBBentOverRow" },
   "Ring Dip": { note:"Vertical push; rings rotate naturally; scale with feet supported.", ref:"https://gmb.io/gymnastic-rings-risks-benefits/" },
-  "Push-Up": { note:"Horizontal push; elbows 45\u00b0, full lockout.", ref:"https://exrx.net/WeightExercises/PectoralSternal/BWPushup" },
-  "DB Overhead Press": { note:"Core braced \u2014 no back hyperextension, seated or standing.", ref:"https://weighttraining.guide/exercises/seated-dumbbell-overhead-press/" },
+  "Push-Up": { note:"Horizontal push; elbows 45°, full lockout.", ref:"https://exrx.net/WeightExercises/PectoralSternal/BWPushup" },
+  "DB Overhead Press": { note:"Core braced — no back hyperextension, seated or standing.", ref:"https://weighttraining.guide/exercises/seated-dumbbell-overhead-press/" },
   "Band Face Pull": { note:"Precision movement, not loaded; shoulder health.", ref:"https://musclewiki.com/exercise/band-face-pull" },
   "DB Curl": { note:"Full extension at bottom, peak contraction at top; no swing.", ref:"https://exrx.net/WeightExercises/Biceps/DBCurl" },
   "DB Romanian Dead Lift": { note:"Hinge to mid-shin only (flexibility limit); posterior chain.", ref:"https://exrx.net/WeightExercises/OlympicLifts/RomanianDeadlift" },
@@ -230,24 +204,24 @@ const EXERCISE_DETAILS = {
   "Pallof Press": { note:"Anti-rotation; press straight out from chest, resist the band's pull to the side.", ref:"https://weighttraining.guide/exercises/cable-horizontal-pallof-press/" },
   "Calf Raise (Double-Leg)": { note:"Slow controlled tempo both directions, no bounce/ballistic loading (Achilles). Both feet on the ground.", ref:"https://exrx.net/WeightExercises/Gastrocnemius/BWStandingCalfRaise" },
   "Calf Raise (Single-Leg)": { note:"Slow controlled tempo both directions, no bounce/ballistic loading (Achilles). Unlocked only after sustained pain-free tolerance of Double-Leg.", ref:"https://exrx.net/WeightExercises/Gastrocnemius/BWSingleLegCalfRaise" },
-  "Gripping": { note:"Grip trainer (doughnut); 3 sec hold at peak contraction, slow controlled release \u2014 emphasize the negative. No bodyweight component.", ref:null },
+  "Gripping": { note:"Grip trainer (doughnut); 3 sec hold at peak contraction, slow controlled release — emphasize the negative. No bodyweight component.", ref:null },
 };
 
 const STRETCH_DETAILS = {
-  "Standing Quads Stretch": { dur:"2\u00d720-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
-  "Lying Glute Stretch": { dur:"2\u00d720-30s", note:"Glute / piriformis.", ref:"https://exrx.net/Stretches/GluteusMaximus/Lying" },
-  "Seated Groin Stretch": { dur:"2\u00d720-30s", note:"Adductors. Soles together, pull heels toward groin, press knees toward floor with elbows \u2014 don't force.", ref:"https://exrx.net/Stretches/HipAdductors/SeatedGroinFloor" },
-  "Standing Hamstring Stretch (forward fold)": { dur:"2\u00d720-30s", note:"Hamstring. Hand-supported on thighs/shins as the fold develops \u2014 do not hang unsupported.", ref:"https://exrx.net/Stretches/Hamstrings/Standing" },
-  "Doorway Hamstring & Hip Flexor Stretch": { dur:"2\u00d730-60s", note:"Hamstring (raised leg) + hip flexor (extended leg) together. Lift the raised leg only until the lower back flattens to the floor. Shoes off.", ref:"https://www.columbiadoctors.org/health-library/multimedia/hamstring-stretch-doorway/" },
-  "Wall Straight Leg Calf Stretch": { dur:"2\u00d720-30s", note:"Gastrocnemius. Rear knee straight, heel down.", ref:"https://exrx.net/Stretches/Gastrocnemius/Wall" },
-  "Wall Bent Knee Calf Stretch": { dur:"2\u00d720-30s", note:"Soleus. Rear knee bent \u2014 isolates soleus from gastrocnemius.", ref:"https://exrx.net/Stretches/Soleus/Wall" },
-  "Kneeling Hip Flexor Stretch": { dur:"2\u00d720-30s", note:"Hip flexor (iliopsoas). Torso upright, push hips forward \u2014 don't lean forward from the torso.", ref:"https://exrx.net/Stretches/HipFlexors/KneelingHipFlexor" },
-  "Seated Cross Twist (IT Band)": { dur:"2\u00d715-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.mayoclinic.org/healthy-lifestyle/stress-management/multimedia/seated-spinal-twist/vid-20453586" },
-  "Doorway Chest Stretch": { dur:"2\u00d720-30s", note:"Chest (pectoralis). Elbow at shoulder height for balanced upper/lower chest stretch.", ref:"https://exrx.net/Stretches/ChestGeneral/Doorway" },
-  "Rear Deltoid Stretch (cross-body)": { dur:"2\u00d720-30s", note:"Rear deltoid / posterior shoulder. Arm across chest, opposite hand on elbow.", ref:"https://exrx.net/Stretches/DeltoidPosterior/RearDelt" },
-  "Overhead Triceps Stretch": { dur:"2\u00d720-30s", note:"Triceps. Forearm behind head, opposite hand pulls elbow gently.", ref:"https://exrx.net/Stretches/Triceps/Overhead" },
-  "Overhead Lat Stretch": { dur:"2\u00d720-30s", note:"Lat. Pull elbow toward head/back, lean torso away \u2014 avoid overstressing the neck.", ref:"https://exrx.net/Stretches/LatissimusDorsi/Overhead" },
-  "Child's Pose (modified, wide-knee)": { dur:"1-2 min", note:"Lower back, passive stretch. Knees wide, big toes together \u2014 wide-knee reduces hip-flexion demand.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
+  "Standing Quads Stretch": { dur:"2×20-30s", note:"Quad. Pull heel toward glute; don't let knee flare out to the side.", ref:"https://exrx.net/Stretches/Quadriceps/Standing" },
+  "Lying Glute Stretch": { dur:"2×20-30s", note:"Glute / piriformis.", ref:"https://exrx.net/Stretches/GluteusMaximus/Lying" },
+  "Seated Groin Stretch": { dur:"2×20-30s", note:"Adductors. Soles together, pull heels toward groin, press knees toward floor with elbows — don't force.", ref:"https://exrx.net/Stretches/HipAdductors/SeatedGroinFloor" },
+  "Standing Hamstring Stretch (forward fold)": { dur:"2×20-30s", note:"Hamstring. Hand-supported on thighs/shins as the fold develops — do not hang unsupported.", ref:"https://exrx.net/Stretches/Hamstrings/Standing" },
+  "Doorway Hamstring & Hip Flexor Stretch": { dur:"2×30-60s", note:"Hamstring (raised leg) + hip flexor (extended leg) together. Lift the raised leg only until the lower back flattens to the floor. Shoes off.", ref:"https://www.columbiadoctors.org/health-library/multimedia/hamstring-stretch-doorway/" },
+  "Wall Straight Leg Calf Stretch": { dur:"2×20-30s", note:"Gastrocnemius. Rear knee straight, heel down.", ref:"https://exrx.net/Stretches/Gastrocnemius/Wall" },
+  "Wall Bent Knee Calf Stretch": { dur:"2×20-30s", note:"Soleus. Rear knee bent — isolates soleus from gastrocnemius.", ref:"https://exrx.net/Stretches/Soleus/Wall" },
+  "Kneeling Hip Flexor Stretch": { dur:"2×20-30s", note:"Hip flexor (iliopsoas). Torso upright, push hips forward — don't lean forward from the torso.", ref:"https://exrx.net/Stretches/HipFlexors/KneelingHipFlexor" },
+  "Seated Cross Twist (IT Band)": { dur:"2×15-20s", note:"IT band / TFL, mild spinal rotation. Common cycling-posture tightness.", ref:"https://www.mayoclinic.org/healthy-lifestyle/stress-management/multimedia/seated-spinal-twist/vid-20453586" },
+  "Doorway Chest Stretch": { dur:"2×20-30s", note:"Chest (pectoralis). Elbow at shoulder height for balanced upper/lower chest stretch.", ref:"https://exrx.net/Stretches/ChestGeneral/Doorway" },
+  "Rear Deltoid Stretch (cross-body)": { dur:"2×20-30s", note:"Rear deltoid / posterior shoulder. Arm across chest, opposite hand on elbow.", ref:"https://exrx.net/Stretches/DeltoidPosterior/RearDelt" },
+  "Overhead Triceps Stretch": { dur:"2×20-30s", note:"Triceps. Forearm behind head, opposite hand pulls elbow gently.", ref:"https://exrx.net/Stretches/Triceps/Overhead" },
+  "Overhead Lat Stretch": { dur:"2×20-30s", note:"Lat. Pull elbow toward head/back, lean torso away — avoid overstressing the neck.", ref:"https://exrx.net/Stretches/LatissimusDorsi/Overhead" },
+  "Child's Pose (modified, wide-knee)": { dur:"1-2 min", note:"Lower back, passive stretch. Knees wide, big toes together — wide-knee reduces hip-flexion demand.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
 };
 
 const STRETCH_LISTS = {
@@ -259,10 +233,10 @@ const STRETCH_LISTS = {
 };
 
 const YOGA_POSES = [
-  { pose:"Centering (seated breath)", dur:"3-5 min", note:"Cross-legged or in a chair, eyes closed, slow breath. Nervous-system settling \u2014 sets the pace for the session.", ref:null },
-  { pose:"Cat-Cow", dur:"5 min (~8-10 rounds)", note:"Hands and knees, alternate arching (Cow) and rounding (Cat) with the breath. Non-weight-bearing \u2014 no Achilles or hip-depth concern.", ref:"https://en.wikipedia.org/wiki/Cat/Cow_pose" },
-  { pose:"Sphinx Pose", dur:"2\u00d760-90s", note:"Prone, forearms down, chest lifted. Gentlest backbend \u2014 zero ankle involvement.", ref:"https://www.yogajournal.com/poses/sphinx-pose/" },
-  { pose:"Reclining Bound Angle", dur:"2-3 min", note:"On the back, knees open to the sides, soles together. Purely passive hip opener \u2014 prop under each knee if needed.", ref:"https://www.yogajournal.com/poses/reclining-bound-angle-pose/" },
+  { pose:"Centering (seated breath)", dur:"3-5 min", note:"Cross-legged or in a chair, eyes closed, slow breath. Nervous-system settling — sets the pace for the session.", ref:null },
+  { pose:"Cat-Cow", dur:"5 min (~8-10 rounds)", note:"Hands and knees, alternate arching (Cow) and rounding (Cat) with the breath. Non-weight-bearing — no Achilles or hip-depth concern.", ref:"https://en.wikipedia.org/wiki/Cat/Cow_pose" },
+  { pose:"Sphinx Pose", dur:"2×60-90s", note:"Prone, forearms down, chest lifted. Gentlest backbend — zero ankle involvement.", ref:"https://www.yogajournal.com/poses/sphinx-pose/" },
+  { pose:"Reclining Bound Angle", dur:"2-3 min", note:"On the back, knees open to the sides, soles together. Purely passive hip opener — prop under each knee if needed.", ref:"https://www.yogajournal.com/poses/reclining-bound-angle-pose/" },
   { pose:"Supine Spinal Twist", dur:"60-90s per side", note:"On the back, knees bent, drop both knees to one side, shoulders grounded. Safest twist for the back history.", ref:"https://www.yogabasics.com/asana/knee-down-twist/" },
   { pose:"Child's Pose (wide-knee)", dur:"2-3 min", note:"Knees wide, big toes touching, hips sinking toward heels. Wide-knee, not narrow.", ref:"https://www.yogajournal.com/poses/child-s-pose/" },
   { pose:"Legs-Up-the-Wall", dur:"5-8 min", note:"Legs resting up a wall, hips close to it. Closest thing to true rest in the sequence.", ref:"https://www.yogajournal.com/poses/legs-up-the-wall-pose-2/" },
@@ -416,7 +390,7 @@ function bandTotal(mix) {
   return BAND_TIERS.reduce((sum, t) => sum + t * (mix[t] || 0), 0);
 }
 function bandBreakdown(mix) {
-  const parts = BAND_TIERS.filter(t => mix[t] > 0).map(t => `${mix[t]}\u00d7${t}`);
+  const parts = BAND_TIERS.filter(t => mix[t] > 0).map(t => `${mix[t]}×${t}`);
   return parts.length ? parts.join('+') : 'none';
 }
 function fmtWeight(cfg, val) {
@@ -641,7 +615,7 @@ function renderHome() {
   }
   app.innerHTML = `
     <h1>Workout Collector</h1>
-    <p class="sub">Tap a day to log it. Everything here is click/tap \u2014 no typing required except the rare optional note.</p>
+    <p class="sub">Tap a day to log it. Everything here is click/tap — no typing required except the rare optional note.</p>
     <div class="home-section-label">Strength Days</div>
     <div class="grid2">
       ${strengthBtn(1)}
@@ -656,7 +630,7 @@ function renderHome() {
       ${cyclingBtn('Extra', 'Extra')}
     </div>
     <div class="home-section-label">Other</div>
-    <button class="${otherCls('last_yoga')}" onclick="goYoga()">Day 7 \u2014 Yoga${lastSub('last_yoga')}</button>
+    <button class="${otherCls('last_yoga')}" onclick="goYoga()">Day 7 — Yoga${lastSub('last_yoga')}</button>
     <button class="${otherCls('last_achilles')}" onclick="goAchilles()">Weekly Achilles Check${lastSub('last_achilles')}</button>
     <button class="${otherCls('last_rom')}" onclick="goRom()">Hip Hinge ROM Check${lastSub('last_rom')}</button>
     <button class="${otherCls('last_bodymetrics')}" onclick="goBodyMetrics()">Weight / Body Metrics${lastSub('last_bodymetrics')}</button>
@@ -689,7 +663,7 @@ async function exportSettings() {
   const file = new File([json], filename, { type: "application/json" });
   const statusEl = document.getElementById('settings-status');
   if (count === 0) {
-    statusEl.textContent = "Nothing to export yet \u2014 no exercise has been shared from this device.";
+    statusEl.textContent = "Nothing to export yet — no exercise has been shared from this device.";
     statusEl.className = 'show err';
     return;
   }
@@ -747,7 +721,7 @@ function renderSettings() {
     </div>
     <div class="card">
       <div class="card-title">Screen Wake Lock</div>
-      <p style="font-size:14px;margin:4px 0 10px;" id="wakelock-status">Checking\u2026</p>
+      <p style="font-size:14px;margin:4px 0 10px;" id="wakelock-status">Checking…</p>
       <button class="btn secondary" onclick="requestWakeLock()">Retry Now</button>
     </div>
     <div class="card">
@@ -771,7 +745,7 @@ function renderStretchChecklist(stretchArr, prefix) {
     html += `<div class="check-item">
       <div class="toggle-row">
         <span class="name" onclick="toggleDetail('${prefix}-str-${i}')">${s.item}</span>
-        <button class="toggle-btn ${s.done?'on':''}" onclick="toggleStretch('${prefix}',${i})">${s.done?'Done \u2713':'Not done'}</button>
+        <button class="toggle-btn ${s.done?'on':''}" onclick="toggleStretch('${prefix}',${i})">${s.done?'Done ✓':'Not done'}</button>
       </div>
       <div style="display:none;" id="detail-${prefix}-str-${i}">
         ${detailBlockHTML(`${prefix}-str-${i}`.replace('detail-',''), d.note, d.ref, d.dur)}
@@ -894,7 +868,7 @@ function checklistItemHTML(label) {
   const on = state.checklist[label];
   return `<div class="toggle-row" style="margin-bottom:8px;">
       <span style="font-size:14px;">${label}</span>
-      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done \u2713':'Not done'}</button>
+      <button class="toggle-btn ${on?'on':''}" onclick="toggleChecklist('${label.replace(/'/g,"\\'")}')">${on?'Done ✓':'Not done'}</button>
     </div>`;
 }
 
@@ -944,7 +918,7 @@ function renderExerciseControls(entry, i) {
         ${BAND_TIERS.map(t => `<div class="bandtier">
           <div class="tlabel">${t}#</div>
           <div class="mini">
-            <button onclick="adjustBand(${i}, ${t}, -1)">\u2212</button>
+            <button onclick="adjustBand(${i}, ${t}, -1)">−</button>
             <span class="v" id="band-${i}-${t}">${entry.weight[t]}</span>
             <button onclick="adjustBand(${i}, ${t}, 1)">+</button>
           </div>
@@ -953,7 +927,7 @@ function renderExerciseControls(entry, i) {
       <div class="band-total" id="band-total-${i}">${fmtWeight(entry.weightCfg, entry.weight)}</div>`;
   } else if (entry.weightCfg) {
     html += stepperRowHTML(`Weight${entry.weightCfg.labelSuffix || ''}`, `w-val-${i}`, fmtWeight(entry.weightCfg, entry.weight), {
-      minus: { onclick: `adjustWeight(${i}, -${entry.weightCfg.step})`, label: '\u2212' },
+      minus: { onclick: `adjustWeight(${i}, -${entry.weightCfg.step})`, label: '−' },
       plus: { onclick: `adjustWeight(${i}, ${entry.weightCfg.step})`, label: '+' },
     });
   } else {
@@ -983,7 +957,7 @@ function renderExerciseControls(entry, i) {
   }
 
   html += stepperRowHTML('Sets', `sets-val-${i}`, entry.activeSets, {
-      minus: { onclick: `adjustSets(${i}, -1)`, label: '\u2212' },
+      minus: { onclick: `adjustSets(${i}, -1)`, label: '−' },
       plus: { onclick: `adjustSets(${i}, 1)`, label: '+' },
     });
   html += `<div id="setgrid-${i}">${renderSetCells(entry, i)}</div>
@@ -1004,7 +978,7 @@ function setCellHTML(entry, i, s) {
   return `<div class="setcell">
       <div class="setlabel">Set ${s+1}</div>
       <div class="mini">
-        <button onclick="adjustRep(${i},${s},-1)">\u2212</button>
+        <button onclick="adjustRep(${i},${s},-1)">−</button>
         <span class="v" id="rep-${i}-${s}">${entry.reps[s]}</span>
         <button onclick="adjustRep(${i},${s},1)">+</button>
       </div>
@@ -1133,7 +1107,11 @@ function buildStrengthPayload() {
     if (e.weightCfg) {
       rec.weight = e.weightCfg.type === "bandmix" ? String(bandTotal(e.weight)) : String(e.weight);
     }
-    rec.reps_or_time = e.reps.map((v, idx) => idx < e.activeSets ? String(v) : "0");
+    // 2026-08 fix: a set beyond activeSets was never rendered this session (renderSetCells
+    // only draws cells for s < activeSets) -- no reading was taken, so it reports null, not
+    // "0". An active set showing a real 0 (attempted, zero clean reps) is a genuine
+    // measurement and still reports "0" unchanged. See SPEC.md §5.4 / §7.
+    rec.reps_or_time = e.reps.map((v, idx) => idx < e.activeSets ? String(v) : null);
     rec.top_of_range = e.topOfRange;
     rec.notes = e.notes || "";
     if (e.heights) rec.step_height_in = e.height;
@@ -1147,7 +1125,7 @@ function buildStrengthPayload() {
   state.stretches.forEach(s => {
     entries.push({ item: s.item, category: "stretch", done: s.done });
   });
-  return { schema_version: "1.6", date: state.date, day_type: "strength", day_number: state.day, entries };
+  return { schema_version: "1.7", date: state.date, day_type: "strength", day_number: state.day, entries };
 }
 
 /* ============================== CYCLING ============================== */
@@ -1163,7 +1141,7 @@ function renderCycling() {
   const equipmentOptions = ['Road','Keiser','LifeFitness'];
   const isExtra = state.day === 'Extra';
   let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
-    <h1>${isExtra ? 'Extra' : 'Day ' + state.day} \u2014 Cardio</h1>
+    <h1>${isExtra ? 'Extra' : 'Day ' + state.day} — Cardio</h1>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
@@ -1184,11 +1162,11 @@ function renderCycling() {
     </div>
     <div class="card">
       ${stepperRowHTML('Miles', 'miles-val', state.miles + ' mi', {
-        minusCoarse: { onclick: 'adjMiles(-5)', label: '\u22125' }, minus: { onclick: 'adjMiles(-1)', label: '\u22121' },
+        minusCoarse: { onclick: 'adjMiles(-5)', label: '−5' }, minus: { onclick: 'adjMiles(-1)', label: '−1' },
         plus: { onclick: 'adjMiles(1)', label: '+1' }, plusCoarse: { onclick: 'adjMiles(5)', label: '+5' },
       })}
       ${stepperRowHTML('Duration', 'dur-val', fmtDuration(state.duration), {
-        minusCoarse: { onclick: 'adjDuration(-15)', label: '\u221215' }, minus: { onclick: 'adjDuration(-5)', label: '\u22125' },
+        minusCoarse: { onclick: 'adjDuration(-15)', label: '−15' }, minus: { onclick: 'adjDuration(-5)', label: '−5' },
         plus: { onclick: 'adjDuration(5)', label: '+5' }, plusCoarse: { onclick: 'adjDuration(15)', label: '+15' },
       })}
       <a class="note-link" onclick="toggleCyclingNote()">${state.noteOpen?'Hide note':'+ note'}</a>
@@ -1207,7 +1185,7 @@ function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.ge
 function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
-  const rec = { schema_version:"1.6", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
+  const rec = { schema_version:"1.7", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
   if (state.day !== 'Extra') rec.phase = state.phase;
   rec.equipment = state.equipment;
   rec.miles = state.miles; rec.duration_min = state.duration;
@@ -1226,7 +1204,7 @@ function goYoga() {
 }
 function renderYoga() {
   let html = `<a class="backlink" onclick="goHome()">&larr; Home</a>
-    <h1>Day 7 \u2014 Yoga</h1>
+    <h1>Day 7 — Yoga</h1>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
@@ -1237,7 +1215,7 @@ function renderYoga() {
     html += `<div class="check-item">
       <div class="toggle-row">
         <span class="name" onclick="toggleDetail('yoga-${i}')">${p.pose}</span>
-        <button class="toggle-btn ${p.done?'on':''}" onclick="toggleYogaPose(${i})">${p.done?'Done \u2713':'Not done'}</button>
+        <button class="toggle-btn ${p.done?'on':''}" onclick="toggleYogaPose(${i})">${p.done?'Done ✓':'Not done'}</button>
       </div>
       <div style="display:none;" id="detail-yoga-${i}">${detailBlockHTML(`yoga-${i}`, d.note, d.ref, d.dur)}</div>
     </div>`;
@@ -1256,7 +1234,7 @@ function renderYoga() {
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
 function buildYogaPayload() {
-  return { schema_version:"1.6", date: state.date, day_type:"yoga",
+  return { schema_version:"1.7", date: state.date, day_type:"yoga",
     poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
 }
 
@@ -1320,7 +1298,7 @@ function buildAchillesPayload() {
   // Note: ach_last persistence (carry-forward of pain/increased to next session) is written
   // in shareNow() alongside all other explicit persist calls -- not here, to keep payload
   // builders free of side effects. All other persist operations follow the same pattern.
-  return { schema_version:"1.6", date: state.date, day_type:"achilles_check",
+  return { schema_version:"1.7", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
@@ -1362,14 +1340,14 @@ function goRom() {
 function renderRom() {
   app.innerHTML = `<a class="backlink" onclick="goHome()">&larr; Home</a>
     <h1>Hip Hinge ROM Check</h1>
-    <p class="sub">Every 4\u20136 weeks.</p>
+    <p class="sub">Every 4–6 weeks.</p>
     <div class="card">
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>
     <div class="card">
       ${stepperRowHTML('Distance', 'rom-val', state.distance + ' in', {
-        minus: { onclick: 'adjRom(-0.5)', label: '\u2212' }, plus: { onclick: 'adjRom(0.5)', label: '+' },
+        minus: { onclick: 'adjRom(-0.5)', label: '−' }, plus: { onclick: 'adjRom(0.5)', label: '+' },
       })}
       <a class="note-link" onclick="toggleRomNote()">${state.noteOpen?'Hide note':'+ note'}</a>
       ${state.noteOpen ? `<input class="note-field" type="text" value="${state.notes.replace(/"/g,'&quot;')}" oninput="state.notes=this.value">` : ''}
@@ -1391,7 +1369,7 @@ function buildRomPayload() {
   // Note: rom_last persistence (carry-forward of distance to next session) is written in
   // shareNow() alongside all other explicit persist calls -- not here. Same principle as
   // the achilles_check fix above.
-  return { schema_version:"1.6", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+  return { schema_version:"1.7", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
 /* ============================== BODY METRICS ============================== */
@@ -1426,8 +1404,8 @@ function renderBodyMetrics() {
   BODY_METRICS_FIELDS.forEach(f => {
     const locked = state.weightOnly && f.key !== 'weight_lbs';
     html += stepperRowHTML(f.label, `bm-val-${f.key}`, fmtBodyMetric(f, state.values[f.key]), {
-      minusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', -2)`, label: '\u2212\u2212' } : null,
-      minus: { onclick: `adjustBodyMetric('${f.key}', -1)`, label: '\u2212' },
+      minusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', -2)`, label: '−−' } : null,
+      minus: { onclick: `adjustBodyMetric('${f.key}', -1)`, label: '−' },
       plus: { onclick: `adjustBodyMetric('${f.key}', 1)`, label: '+' },
       plusCoarse: f.coarseStep ? { onclick: `adjustBodyMetric('${f.key}', 2)`, label: '++' } : null,
       disabled: locked,
@@ -1479,8 +1457,16 @@ function persistBodyMetrics() {
 }
 
 function buildBodyMetricsPayload() {
-  const rec = { schema_version: "1.6", date: state.date, day_type: "body_metrics" };
-  BODY_METRICS_FIELDS.forEach(f => { rec[f.key] = state.values[f.key]; });
+  const rec = { schema_version: "1.7", date: state.date, day_type: "body_metrics" };
+  // 2026-08 fix: while Weight Only is on, the 6 non-weight fields are disabled (grayed
+  // out, not editable) -- no reading was taken this session, so they report null rather
+  // than the stale carried-forward value. weight_lbs is never locked by Weight Only, so
+  // it's never guarded here. When Weight Only is off, every field is live/editable and
+  // goes out as entered, unchanged from before. See SPEC.md §5.9 / §7.
+  BODY_METRICS_FIELDS.forEach(f => {
+    const locked = state.weightOnly && f.key !== 'weight_lbs';
+    rec[f.key] = locked ? null : state.values[f.key];
+  });
   rec.notes = state.notes || "";
   return rec;
 }
@@ -1584,8 +1570,8 @@ function ensureWakeLock() {
 function updateWakeLockStatusUI() {
   const el = document.getElementById('wakelock-status');
   if (!el) return; // Settings screen isn't necessarily mounted right now -- fine, state is tracked regardless
-  const text = { active: '\u2713 Screen will stay on', unsupported: 'Not supported on this browser',
-    denied: '\u26a0\ufe0f Screen may sleep \u2014 tap anywhere to retry', unknown: 'Checking\u2026' }[wakeLockStatus];
+  const text = { active: '✓ Screen will stay on', unsupported: 'Not supported on this browser',
+    denied: '⚠️ Screen may sleep — tap anywhere to retry', unknown: 'Checking…' }[wakeLockStatus];
   el.textContent = text;
 }
 
@@ -1647,7 +1633,7 @@ function openTimer() {
 }
 
 function timerBarHTML() {
-  return `<div class="timer-fab-bar"><button class="btn" onclick="openTimer()">\u23f1 Start Timer</button></div>`;
+  return `<div class="timer-fab-bar"><button class="btn" onclick="openTimer()">⏱ Start Timer</button></div>`;
 }
 
 function startTimerAfterDelay() {
@@ -1691,15 +1677,28 @@ function closeTimer() {
 }
 
 /* ============================== ORIENTATION LOCK ============================== */
-/* Portrait orientation lock — attempt Screen Orientation API lock first.
-   Works natively on iOS 16.4+ when installed as a home-screen PWA.
-   CSS @media counter-rotation in the style block handles older iOS.
+/* Portrait orientation lock — lock to 'portrait-primary' explicitly, not the 'portrait'
+   shorthand. 'portrait' permits the browser to satisfy the lock with EITHER
+   portrait-primary (normal) or portrait-secondary (upside-down) -- this was the confirmed
+   root cause of the screen occasionally rendering fully inverted (bottom of content at the
+   top of the physical screen). 'portrait-primary' removes that ambiguity.
+   Works natively on iOS 16.4+ when installed as a home-screen PWA; Mark's device
+   (iOS 26.5.2) is well past that threshold.
+
+   The CSS @media (orientation:landscape) counter-rotation fallback that previously lived
+   in the style block has been removed entirely (2026-08): it reacted to transient
+   landscape states the browser reports mid-rotation-gesture, even when this API lock was
+   about to reject the rotation and hold portrait -- that transient reaction was the
+   confirmed cause of the reported jump-then-jump-back flicker, and occasionally raced the
+   API lock into the inverted state above. With the CSS fallback gone and the API lock
+   explicit, the on-screen layout no longer reacts to the rotation signal at all -- nothing
+   changes, ever, which is the desired behavior.
    typeof guard keeps this inert in the Node.js test harness. */
 (function lockPortrait() {
   try {
     if (typeof screen !== 'undefined' && screen.orientation
         && typeof screen.orientation.lock === 'function') {
-      const attempt = () => screen.orientation.lock('portrait').catch(() => {});
+      const attempt = () => screen.orientation.lock('portrait-primary').catch(() => {});
       attempt();
       document.addEventListener('touchstart', attempt, { once: true, passive: true });
       screen.orientation.addEventListener('change', attempt);
