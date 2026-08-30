@@ -496,6 +496,11 @@ async function shareJSON(payload, filenameBase, statusElId) {
     // separate text-share item next to the actual JSON file (see §5.5 and §7 in SPEC.md).
     await navigator.share({ files: [file] });
     show(`Shared ${filename}. Confirm in Mail that the file is actually attached before sending.`, "ok");
+    // Return to Home after a successful share (2026-08-30, Mark's request) -- pause long
+    // enough to read the confirmation above, then go back automatically. Guarded on the
+    // current screen so this can't clobber a screen the person has already navigated to
+    // in the meantime.
+    setTimeout(() => { if (state.screen !== 'home') goHome(); }, 1600);
   } catch (err) {
     if (err.name !== "AbortError") show("Share failed: " + err.message, "err");
   }
