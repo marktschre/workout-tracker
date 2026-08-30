@@ -1125,7 +1125,7 @@ function buildStrengthPayload() {
   state.stretches.forEach(s => {
     entries.push({ item: s.item, category: "stretch", done: s.done });
   });
-  return { schema_version: "1.7", date: state.date, day_type: "strength", day_number: state.day, entries };
+  return { schema_version: "1.8", date: state.date, day_type: "strength", day_number: state.day, entries };
 }
 
 /* ============================== CYCLING ============================== */
@@ -1146,14 +1146,16 @@ function renderCycling() {
       <label style="font-size:13px;color:#6e6e73;">Date</label>
       <input type="date" value="${state.date}" onchange="state.date=this.value">
     </div>`;
-  if (!isExtra) {
-    html += `<div class="card">
+  // 2026-08-29 fix: Rotation Phase reflects effort level (Recovery/Half-max/Max), not whether
+  // the ride was a scheduled Day 2/5 or an ad hoc Extra -- it applies either way, so it's now
+  // shown (and collected) for all three cardio variants instead of being hidden for Extra.
+  // See SPEC.md §5.x / §7, schema 1.7->1.8.
+  html += `<div class="card">
       <div class="label" style="font-size:14px;margin-bottom:6px;">Rotation Phase</div>
       <div class="grid3">
         ${phases.map(p => `<button class="variant-btn ${state.phase===p?'selected':''}" onclick="setPhase('${p}')">${p}</button>`).join('')}
       </div>
     </div>`;
-  }
   html += `<div class="card">
       <div class="label" style="font-size:14px;margin-bottom:6px;">Equipment</div>
       <div class="grid3">
@@ -1185,8 +1187,13 @@ function adjMiles(d) { state.miles = clamp(state.miles + d, 0, 110); document.ge
 function adjDuration(d) { state.duration = clamp(state.duration + d, 0, 360); document.getElementById('dur-val').textContent = fmtDuration(state.duration); }
 function toggleCyclingNote() { state.noteOpen = !state.noteOpen; renderCycling(); }
 function buildCyclingPayload() {
-  const rec = { schema_version:"1.7", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? null : state.day };
-  if (state.day !== 'Extra') rec.phase = state.phase;
+  // 2026-08-29 fix: day_number now sends the string "Extra" instead of null. Extra isn't an
+  // unknown/inapplicable day number (what null should mean) -- it's a specific, known category
+  // that the INTEGER column just can't hold, same as "BW" once was for weight before the
+  // exercise_catalog fix normalized that. See SPEC.md §7.
+  const rec = { schema_version:"1.8", date: state.date, day_type:"cycling", day_number: state.day === 'Extra' ? 'Extra' : state.day };
+  // phase now applies to Extra too (see renderCycling) -- always included, never omitted.
+  rec.phase = state.phase;
   rec.equipment = state.equipment;
   rec.miles = state.miles; rec.duration_min = state.duration;
   rec.stretches = state.stretches.map(s => ({ item: s.item, done: s.done }));
@@ -1234,7 +1241,7 @@ function renderYoga() {
 function toggleYogaPose(i) { state.poses[i].done = !state.poses[i].done; renderYoga(); }
 function toggleYogaNote() { state.noteOpen = !state.noteOpen; renderYoga(); }
 function buildYogaPayload() {
-  return { schema_version:"1.7", date: state.date, day_type:"yoga",
+  return { schema_version:"1.8", date: state.date, day_type:"yoga",
     poses: state.poses.map(p => ({ pose: p.pose, done: p.done })), notes: state.notes || "" };
 }
 
@@ -1298,7 +1305,7 @@ function buildAchillesPayload() {
   // Note: ach_last persistence (carry-forward of pain/increased to next session) is written
   // in shareNow() alongside all other explicit persist calls -- not here, to keep payload
   // builders free of side effects. All other persist operations follow the same pattern.
-  return { schema_version:"1.7", date: state.date, day_type:"achilles_check",
+  return { schema_version:"1.8", date: state.date, day_type:"achilles_check",
     pain_stiffness: state.pain, morning_stiffness_increased: state.increased, notes: state.notes || "" };
 }
 
@@ -1369,7 +1376,7 @@ function buildRomPayload() {
   // Note: rom_last persistence (carry-forward of distance to next session) is written in
   // shareNow() alongside all other explicit persist calls -- not here. Same principle as
   // the achilles_check fix above.
-  return { schema_version:"1.7", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
+  return { schema_version:"1.8", date: state.date, day_type:"rom_check", distance_from_floor_in: state.distance, notes: state.notes || "" };
 }
 
 /* ============================== BODY METRICS ============================== */
@@ -1457,7 +1464,7 @@ function persistBodyMetrics() {
 }
 
 function buildBodyMetricsPayload() {
-  const rec = { schema_version: "1.7", date: state.date, day_type: "body_metrics" };
+  const rec = { schema_version: "1.8", date: state.date, day_type: "body_metrics" };
   // 2026-08 fix: while Weight Only is on, the 6 non-weight fields are disabled (grayed
   // out, not editable) -- no reading was taken this session, so they report null rather
   // than the stale carried-forward value. weight_lbs is never locked by Weight Only, so
