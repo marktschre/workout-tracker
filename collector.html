@@ -175,6 +175,37 @@
     z-index: 9999;
     pointer-events: none;   /* taps pass through to content below */
   }
+
+  /* Force-portrait rotation classes -- applied/removed by JS (see the ORIENTATION LOCK
+     block near the end of the file), NOT a plain `@media (orientation: landscape)` rule.
+     That media feature matches BOTH physical rotation directions (landscape-primary and
+     landscape-secondary) identically, and a single fixed-direction counter-rotation gets
+     one of the two backwards (renders upside down) -- exactly the kind of bug this file
+     has already shipped once. These two classes are mirror images of each other (rotate
+     +90/-90 from the opposite screen corner) and were checked with a headless-browser
+     screenshot test (2026-08-30, run from the dev sandbox, NOT an iPhone) confirming each
+     fills the viewport exactly with a clean, undistorted rotation and no clipping. Which
+     class is applied for which physical rotation direction is decided by the JS, and is
+     the one part of this fix that could not be verified from this environment -- see the
+     comment there. */
+  html.force-portrait-cw,
+  html.force-portrait-ccw {
+    overflow: hidden;
+    position: absolute;
+    width: 100vh;
+    height: 100vw;
+    transform-origin: left top;
+  }
+  html.force-portrait-cw {
+    top: 0;
+    left: 100%;
+    transform: rotate(90deg);
+  }
+  html.force-portrait-ccw {
+    top: 100%;
+    left: 0;
+    transform: rotate(-90deg);
+  }
 </style>
 </head>
 <body>
@@ -1689,23 +1720,50 @@ function closeTimer() {
 }
 
 /* ============================== ORIENTATION LOCK ============================== */
-/* Portrait orientation lock — lock to 'portrait-primary' explicitly, not the 'portrait'
-   shorthand. 'portrait' permits the browser to satisfy the lock with EITHER
-   portrait-primary (normal) or portrait-secondary (upside-down) -- this was the confirmed
-   root cause of the screen occasionally rendering fully inverted (bottom of content at the
-   top of the physical screen). 'portrait-primary' removes that ambiguity.
-   Works natively on iOS 16.4+ when installed as a home-screen PWA; Mark's device
-   (iOS 26.5.2) is well past that threshold.
+/* Portrait lock -- third revision (2026-08-30). History, so the reasoning below makes
+   sense in context:
+     - Round 26 (2026-08-08): screen.orientation.lock('portrait') + a CSS
+       @media (orientation:landscape) counter-rotation fallback.
+     - 2026-08-28: reported broken -- jump-then-jump-back flicker during rotation, and the
+       screen occasionally landing fully upside-down. Diagnosed as two separate causes: the
+       CSS fallback reacting to a transient landscape media-query state mid-gesture and
+       racing the JS lock (the flicker), and 'portrait' being a shorthand that permits
+       portrait-SECONDARY, i.e. upside-down (the inversion). Fix at the time: removed the
+       CSS fallback entirely and changed the lock to the unambiguous 'portrait-primary',
+       leaving the JS lock as the only mechanism.
+     - Reported still completely broken 2026-08-30: "screen rotates in response to phone
+       movement" -- i.e. no locking behavior at all, not a flicker or an inversion.
 
-   The CSS @media (orientation:landscape) counter-rotation fallback that previously lived
-   in the style block has been removed entirely (2026-08): it reacted to transient
-   landscape states the browser reports mid-rotation-gesture, even when this API lock was
-   about to reject the rotation and hold portrait -- that transient reaction was the
-   confirmed cause of the reported jump-then-jump-back flicker, and occasionally raced the
-   API lock into the inverted state above. With the CSS fallback gone and the API lock
-   explicit, the on-screen layout no longer reacts to the rotation signal at all -- nothing
-   changes, ever, which is the desired behavior.
-   typeof guard keeps this inert in the Node.js test harness. */
+   Correction: screen.orientation.lock() is, as far as I can find, not implemented in
+   Safari on iOS at all -- Apple has never shipped it. That's a different capability from
+   the Wake Lock API's genuine iOS 16.4+ support referenced elsewhere in this file (§5.6 in
+   SPEC.md). The comment that used to sit on this block claimed the lock was "confirmed
+   working on iOS 16.4+", which conflated the two APIs and was wrong -- it was never
+   verified on-device, and is very likely false. That also explains the 2026-08-30 report:
+   the 2026-08-28 fix removed the one mechanism (the CSS fallback) that had any real chance
+   of working on an iPhone, and kept the one mechanism (the JS lock) that most likely
+   silently no-ops on every call there.
+
+   This revision: the JS lock call below is kept as-is -- it's a real, useful lock on
+   browsers that do implement it, and a harmless no-op elsewhere. The actual fix for
+   Safari is the CSS below (see the style block), driven by JS reading the physical
+   rotation angle, rather than a plain @media (orientation:landscape) rule -- that media
+   feature can't distinguish which of the two landscape directions the phone rotated into,
+   and a single fixed-direction counter-rotation gets one of them backwards. This version
+   reads the actual angle instead and picks the matching rotation class, so both directions
+   come out right-side-up. typeof guards keep both IIFEs inert in the Node.js test harness.
+
+   Honest limits, both flagged for on-device confirmation in SPEC.md §8 rather than assumed
+   fixed: (1) the CSS rotation math itself was checked with a headless-browser screenshot
+   test from the dev sandbox and is confirmed geometrically correct, but which of the two
+   rotation classes belongs to which physical direction relies on screen.orientation.angle,
+   and Safari has a documented history of reporting landscape-primary/secondary
+   inconsistently -- if the on-device result is mirrored (rotated the wrong way), the fix
+   is a one-line swap in IOS_LANDSCAPE_CW_ANGLE below, not a redesign. (2) a brief visual
+   reflow during the physical rotation gesture itself, before the orientationchange event
+   fires and the class is applied, is very likely unavoidable with any CSS/JS-only
+   approach -- the goal here is no reflow at rest and no incorrect end state, not literally
+   zero motion during the turn itself. */
 (function lockPortrait() {
   try {
     if (typeof screen !== 'undefined' && screen.orientation
@@ -1716,6 +1774,58 @@ function closeTimer() {
       screen.orientation.addEventListener('change', attempt);
     }
   } catch (e) { /* orientation lock unavailable in this environment */ }
+})();
+
+(function forcePortraitCSS() {
+  try {
+    if (typeof document === 'undefined' || !document.documentElement) return;
+    var root = document.documentElement;
+
+    // Per the W3C Screen Orientation spec, on a portrait-natural device (a phone) angle 90
+    // is defined as landscape-primary and 270 as landscape-secondary. That's the mapping
+    // used below. Flip this single constant to 270 if on-device testing shows the rotation
+    // is mirrored (Safari has a documented history of swapping primary/secondary here).
+    var IOS_LANDSCAPE_CW_ANGLE = 90;
+
+    function currentAngle() {
+      if (typeof screen !== 'undefined' && screen.orientation
+          && typeof screen.orientation.angle === 'number') {
+        return screen.orientation.angle;
+      }
+      // Old-Safari fallback. window.orientation uses the opposite sign convention from
+      // screen.orientation.angle for the two landscape directions -- normalize it before
+      // comparing against IOS_LANDSCAPE_CW_ANGLE below. Unlikely to matter on Mark's
+      // device (iOS 26.5.2 has screen.orientation.angle), kept only as a safety net.
+      if (typeof window !== 'undefined' && typeof window.orientation === 'number') {
+        return ((-window.orientation) + 360) % 360;
+      }
+      return 0;
+    }
+
+    function apply() {
+      var angle = ((currentAngle() % 360) + 360) % 360;
+      var otherAngle = (IOS_LANDSCAPE_CW_ANGLE + 180) % 360;
+      root.classList.remove('force-portrait-cw', 'force-portrait-ccw');
+      if (angle === IOS_LANDSCAPE_CW_ANGLE) {
+        root.classList.add('force-portrait-cw');
+      } else if (angle === otherAngle) {
+        root.classList.add('force-portrait-ccw');
+      }
+      // angle 0 or 180 (portrait-primary or portrait-secondary/upside-down): no rotation
+      // class -- the JS lock above is what's meant to keep upside-down from happening on
+      // browsers where it actually works, and there's no reliable cross-platform way to
+      // tell right-side-up portrait from upside-down portrait from angle alone to add a
+      // CSS-only fallback for that specific case too.
+    }
+
+    apply();
+    if (typeof screen !== 'undefined' && screen.orientation && screen.orientation.addEventListener) {
+      screen.orientation.addEventListener('change', apply);
+    } else if (typeof window !== 'undefined') {
+      window.addEventListener('orientationchange', apply);
+    }
+    if (typeof window !== 'undefined') window.addEventListener('resize', apply);
+  } catch (e) { /* orientation detection unavailable in this environment */ }
 })();
 
 /* ============================== INIT ============================== */
