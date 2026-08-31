@@ -181,13 +181,20 @@
      That media feature matches BOTH physical rotation directions (landscape-primary and
      landscape-secondary) identically, and a single fixed-direction counter-rotation gets
      one of the two backwards (renders upside down) -- exactly the kind of bug this file
-     has already shipped once. These two classes are mirror images of each other (rotate
-     +90/-90 from the opposite screen corner) and were checked with a headless-browser
-     screenshot test (2026-08-30, run from the dev sandbox, NOT an iPhone) confirming each
+     has already shipped once. All three classes below are checked with a headless-browser
+     screenshot test (2026-08-31, run from the dev sandbox, NOT an iPhone) confirming each
      fills the viewport exactly with a clean, undistorted rotation and no clipping. Which
      class is applied for which physical rotation direction is decided by the JS, and is
      the one part of this fix that could not be verified from this environment -- see the
-     comment there. */
+     comment there.
+
+     Design intent (2026-08-31, Mark's ask): the app is not trying to stay readable from
+     whatever angle you're currently holding the phone at -- it's pinned to the phone's own
+     physical frame, so the app's "top" always sits at the same edge as the selfie camera,
+     no matter how the phone is rotated, including upside-down. If that means the app looks
+     upside-down to you in that moment, that's the intended result, not a bug -- the
+     alternative (auto-correcting to always look "right side up" to the viewer) is exactly
+     the reflow-to-match-gravity behavior this whole feature exists to defeat. */
   html.force-portrait-cw,
   html.force-portrait-ccw {
     overflow: hidden;
@@ -205,6 +212,13 @@
     top: 100%;
     left: 0;
     transform: rotate(-90deg);
+  }
+  html.force-portrait-180 {
+    /* Unlike the two classes above, a 180-degree turn doesn't swap width/height, so no
+       position/dimension juggling is needed -- a plain centered rotation fills the same
+       box exactly. Verified the same way as the other two (screenshot test, 2026-08-31). */
+    transform: rotate(180deg);
+    transform-origin: center center;
   }
 </style>
 </head>
@@ -1763,7 +1777,19 @@ function closeTimer() {
    reflow during the physical rotation gesture itself, before the orientationchange event
    fires and the class is applied, is very likely unavoidable with any CSS/JS-only
    approach -- the goal here is no reflow at rest and no incorrect end state, not literally
-   zero motion during the turn itself. */
+   zero motion during the turn itself.
+
+   Fourth pass (2026-08-31): Mark clarified the actual goal is simpler than "detect which way
+   is up and re-right itself" -- the app should just stay pinned to the phone's own physical
+   frame (top of the app at the camera edge) and never try to compensate for viewing angle at
+   all, upside-down included. That removed a gap this revision had left open on purpose: angle
+   180 (portrait-secondary/upside-down) was previously left unhandled on the mistaken belief
+   that angle alone can't tell right-side-up portrait from upside-down apart reliably -- per
+   the same W3C spec cited above, it can (0 vs 180 for a portrait-natural device), so that
+   caveat was overcautious, not a real constraint. A third rotation class,
+   html.force-portrait-180, now covers it: a plain centered 180-degree turn, no dimension
+   swap needed since width/height don't change. Also screenshot-verified against the real
+   file (2026-08-31); same on-device caveats as above still apply. See SPEC.md §5.6a. */
 (function lockPortrait() {
   try {
     if (typeof screen !== 'undefined' && screen.orientation
@@ -1776,15 +1802,34 @@ function closeTimer() {
   } catch (e) { /* orientation lock unavailable in this environment */ }
 })();
 
+// Per the W3C Screen Orientation spec, on a portrait-natural device (a phone) angle 90 is
+// defined as landscape-primary and 270 as landscape-secondary. cwAngle below carries that
+// assumption -- flip it to 270 if on-device testing shows the rotation is mirrored (Safari
+// has a documented history of swapping primary/secondary here). Kept as a standalone, pure
+// function (no DOM, no globals) rather than inlined in forcePortraitCSS below, specifically
+// so it has real test coverage -- see Tests/test_logic30.js. angle 180 (portrait-secondary,
+// upside-down) is always its own case regardless of cwAngle: unlike the landscape pair, it
+// isn't a primary/secondary distinction Safari has been seen to swap.
+function computeForcePortraitClass(angle, cwAngle) {
+  var a = ((angle % 360) + 360) % 360;
+  var ccwAngle = (cwAngle + 180) % 360;
+  if (a === cwAngle) return 'force-portrait-cw';
+  if (a === ccwAngle) return 'force-portrait-ccw';
+  if (a === 180) return 'force-portrait-180';
+  return null; // angle 0: natural portrait-primary, nothing to do
+}
+
+// window.orientation (old-Safari fallback, see currentAngle() below) uses the opposite sign
+// convention from screen.orientation.angle for the two landscape directions -- this converts
+// one to the other. Standalone and pure for the same reason as computeForcePortraitClass.
+function normalizeWindowOrientationAngle(windowOrientationValue) {
+  return ((-windowOrientationValue) + 360) % 360;
+}
+
 (function forcePortraitCSS() {
   try {
     if (typeof document === 'undefined' || !document.documentElement) return;
     var root = document.documentElement;
-
-    // Per the W3C Screen Orientation spec, on a portrait-natural device (a phone) angle 90
-    // is defined as landscape-primary and 270 as landscape-secondary. That's the mapping
-    // used below. Flip this single constant to 270 if on-device testing shows the rotation
-    // is mirrored (Safari has a documented history of swapping primary/secondary here).
     var IOS_LANDSCAPE_CW_ANGLE = 90;
 
     function currentAngle() {
@@ -1792,30 +1837,18 @@ function closeTimer() {
           && typeof screen.orientation.angle === 'number') {
         return screen.orientation.angle;
       }
-      // Old-Safari fallback. window.orientation uses the opposite sign convention from
-      // screen.orientation.angle for the two landscape directions -- normalize it before
-      // comparing against IOS_LANDSCAPE_CW_ANGLE below. Unlikely to matter on Mark's
-      // device (iOS 26.5.2 has screen.orientation.angle), kept only as a safety net.
+      // Old-Safari fallback. Unlikely to matter on Mark's device (iOS 26.5.2 has
+      // screen.orientation.angle), kept only as a safety net.
       if (typeof window !== 'undefined' && typeof window.orientation === 'number') {
-        return ((-window.orientation) + 360) % 360;
+        return normalizeWindowOrientationAngle(window.orientation);
       }
       return 0;
     }
 
     function apply() {
-      var angle = ((currentAngle() % 360) + 360) % 360;
-      var otherAngle = (IOS_LANDSCAPE_CW_ANGLE + 180) % 360;
-      root.classList.remove('force-portrait-cw', 'force-portrait-ccw');
-      if (angle === IOS_LANDSCAPE_CW_ANGLE) {
-        root.classList.add('force-portrait-cw');
-      } else if (angle === otherAngle) {
-        root.classList.add('force-portrait-ccw');
-      }
-      // angle 0 or 180 (portrait-primary or portrait-secondary/upside-down): no rotation
-      // class -- the JS lock above is what's meant to keep upside-down from happening on
-      // browsers where it actually works, and there's no reliable cross-platform way to
-      // tell right-side-up portrait from upside-down portrait from angle alone to add a
-      // CSS-only fallback for that specific case too.
+      var cls = computeForcePortraitClass(currentAngle(), IOS_LANDSCAPE_CW_ANGLE);
+      root.classList.remove('force-portrait-cw', 'force-portrait-ccw', 'force-portrait-180');
+      if (cls) root.classList.add(cls);
     }
 
     apply();
