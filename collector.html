@@ -1789,7 +1789,26 @@ function closeTimer() {
    caveat was overcautious, not a real constraint. A third rotation class,
    html.force-portrait-180, now covers it: a plain centered 180-degree turn, no dimension
    swap needed since width/height don't change. Also screenshot-verified against the real
-   file (2026-08-31); same on-device caveats as above still apply. See SPEC.md §5.6a. */
+   file (2026-08-31); same on-device caveats as above still apply. See SPEC.md §5.6a.
+
+   Fifth pass (2026-09-02): on-device testing (four photos, phone upright / rotated left /
+   rotated right / inverted, taken in strict sequence) confirmed two distinct, non-overlapping
+   bugs, not one: (1) both landscape directions came out mirrored -- turning the phone so the
+   screen's top edge faced left produced the app's top-edge-visual at the right, and vice
+   versa -- meaning IOS_LANDSCAPE_CW_ANGLE was the wrong one of the two values the comment
+   above it already flagged as the fix if this happened; changed 90 -> 270. (2) the inverted
+   case got no rotation compensation at all -- the app just showed upside-down, meaning
+   apply() was never called for that transition. Cause: turning the phone from upright to
+   fully inverted (portrait-primary, angle 0, to portrait-secondary, angle 180) changes
+   neither viewport width nor height, so 'resize' can't fire for it, and it appears
+   'orientationchange'/screen.orientation's 'change' don't reliably fire for it either on
+   Mark's iOS version -- all three of forcePortraitCSS's existing triggers are keyed to
+   events that don't fire for this specific transition. Fix: a guarded setInterval polling
+   fallback re-checks the angle every 500ms regardless of events, with a lastAppliedClass
+   short-circuit added to apply() so the poll is a no-op class-list read on every tick where
+   nothing changed. Both changes verified with the same headless-browser screenshot geometry
+   test as the third and fourth passes; on-device re-confirmation (same four-photo sequence)
+   still pending as of this write-up -- see SPEC.md §8. */
 (function lockPortrait() {
   try {
     if (typeof screen !== 'undefined' && screen.orientation
@@ -1830,7 +1849,8 @@ function normalizeWindowOrientationAngle(windowOrientationValue) {
   try {
     if (typeof document === 'undefined' || !document.documentElement) return;
     var root = document.documentElement;
-    var IOS_LANDSCAPE_CW_ANGLE = 90;
+    var IOS_LANDSCAPE_CW_ANGLE = 270;
+    var lastAppliedClass; // avoid redundant classList churn from the polling fallback below
 
     function currentAngle() {
       if (typeof screen !== 'undefined' && screen.orientation
@@ -1847,6 +1867,8 @@ function normalizeWindowOrientationAngle(windowOrientationValue) {
 
     function apply() {
       var cls = computeForcePortraitClass(currentAngle(), IOS_LANDSCAPE_CW_ANGLE);
+      if (cls === lastAppliedClass) return;
+      lastAppliedClass = cls;
       root.classList.remove('force-portrait-cw', 'force-portrait-ccw', 'force-portrait-180');
       if (cls) root.classList.add(cls);
     }
@@ -1858,6 +1880,16 @@ function normalizeWindowOrientationAngle(windowOrientationValue) {
       window.addEventListener('orientationchange', apply);
     }
     if (typeof window !== 'undefined') window.addEventListener('resize', apply);
+    // Polling fallback: the 0<->180-degree transition (portrait-primary <->
+    // portrait-secondary/upside-down) changes neither viewport width nor height, so
+    // 'resize' can't fire for it, and 'orientationchange'/screen.orientation's 'change'
+    // were observed on-device (2026-09-02) not to fire for it either -- every trigger
+    // above is event-based and none of those events cover this specific transition.
+    // Re-check on a timer instead. Guarded with typeof rather than try/catch, matching
+    // the other environment guards in this IIFE, since setInterval isn't provided by the
+    // Node test harness's sandbox (see Tests/test_logic30.js) -- typeof on an undeclared
+    // global returns 'undefined' rather than throwing, so this is a silent no-op there.
+    if (typeof setInterval === 'function') setInterval(apply, 500);
   } catch (e) { /* orientation detection unavailable in this environment */ }
 })();
 
